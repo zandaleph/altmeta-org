@@ -81,8 +81,10 @@ const main = async () => {
   console.log(`COGNITO_CLIENT_ID=${result.UserPoolClient?.ClientId}`);
   console.log(`COGNITO_CLIENT_SECRET=${result.UserPoolClient?.ClientSecret}`);
   const userPoolId = userPoolSummary.PhysicalResourceId;
+  console.log(`COGNITO_USER_POOL_ID=${userPoolId}`);
+  const region = userPoolId?.match(/([-a-z0-9]+)_.*/)?.at(1);
   console.log(
-    `COGNITO_ISSUER=cognito-idp.us-west-2.amazonaws.com/${userPoolId}`
+    `COGNITO_ISSUER=cognito-idp.${region}.amazonaws.com/${userPoolId}`
   );
   console.log(
     `COGNITO_IDENTITY_POOL_ID=${identityPoolSummary.PhysicalResourceId}`

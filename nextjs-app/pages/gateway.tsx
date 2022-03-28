@@ -9,7 +9,7 @@ const Gateway: NextPage = () => {
   const [userData, setUserData] = useState<string | undefined>();
 
   const fetchUserData = async () => {
-    const response = await fetch("http://localhost:3000/api/example");
+    const response = await fetch("http://localhost:3000/api/listUsers");
     setUserData(await response.text());
   };
   return (
@@ -18,7 +18,7 @@ const Gateway: NextPage = () => {
         We're on the Gateway!
       </Typography>
       <Button variant="contained" onClick={fetchUserData}>
-        List User's Folder in S3
+        List Users
       </Button>
       <textarea value={userData} readOnly></textarea>
     </>

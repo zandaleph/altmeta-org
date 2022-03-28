@@ -72,13 +72,19 @@ export class AltmetaOrgStack extends Stack {
       ],
     });
 
+    const cognitoListUserStatement = new PolicyStatement({
+      actions: ["cognito-idp:ListUsers"],
+      resources: [userPool.userPoolArn],
+    });
+
     const authenticatedUserPolicy = new ManagedPolicy(
       this,
       "AuthenticatedUserPolicy"
     );
     authenticatedUserPolicy.addStatements(
       userDataListStatement,
-      userDataAccessStatement
+      userDataAccessStatement,
+      cognitoListUserStatement
     );
 
     const identityPool = new IdentityPool(this, "IdentityPool");
