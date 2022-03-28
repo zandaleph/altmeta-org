@@ -10,8 +10,9 @@
     "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.53.1",
-    "@aws-sdk/credential-providers": "^3.53.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.56.0",
+    "@aws-sdk/client-s3": "^3.56.0",
+    "@aws-sdk/credential-providers": "^3.56.0",
     "@emotion/cache": "latest",
     "@emotion/react": "latest",
     "@emotion/server": "latest",
