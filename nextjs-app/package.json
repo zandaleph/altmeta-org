@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "nexus-typegen": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' --transpile-only schema",
     "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
   },
   "dependencies": {
@@ -19,8 +20,11 @@
     "@emotion/styled": "latest",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
+    "apollo-server-core": "^3.6.7",
+    "apollo-server-micro": "^3.6.7",
     "next": "latest",
     "next-auth": "latest",
+    "nexus": "^1.3.0",
     "openid-client": "latest",
     "react": "latest",
     "react-dom": "latest"
@@ -30,6 +34,7 @@
     "@types/react": "latest",
     "eslint": "latest",
     "eslint-config-next": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "ts-node": "latest"
   }
 }
