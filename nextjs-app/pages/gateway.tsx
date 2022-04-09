@@ -1,53 +1,50 @@
-import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { Suspense, useEffect, FunctionComponent } from "react";
+import {
+  useQueryLoader,
+  graphql,
+  PreloadedQuery,
+  usePreloadedQuery,
+} from "react-relay";
+import { gatewayQuery } from "../generated/relay/gatewayQuery.graphql";
+import UserList from "../src/UserList";
 
-const query = JSON.stringify({
-  operationName: "HelloQuery",
-  variables: {},
-  query: `query HelloQuery {
-  users(first: 10) {
-    edges {
-      node {
-        id
-        ... on EmailUser {
-          email
-        }
-      }
-    }
-    pageInfo {
-      hasNextPage
-      endCursor
-    }
+const query = graphql`
+  query gatewayQuery($count: Int!, $cursor: String) {
+    ...UserList_query
   }
-}`,
-});
+`;
+
+interface Props {
+  queryRef: PreloadedQuery<gatewayQuery>;
+}
+
+const UserListComponent: FunctionComponent<Props> = (props) => {
+  const data = usePreloadedQuery<gatewayQuery>(query, props.queryRef);
+  return <UserList query={data} />;
+};
 
 const Gateway: NextPage = () => {
   useSession({ required: true });
-  const [userData, setUserData] = useState<string | undefined>();
+  const [queryReference, loadQuery] = useQueryLoader<gatewayQuery>(query);
 
-  const fetchUserData = async () => {
-    const response = await fetch("http://localhost:3000/api/graphql", {
-      method: "POST",
-      body: query,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    setUserData(await response.text());
-  };
+  useEffect(() => {
+    loadQuery({ count: 10 });
+  }, [loadQuery]);
+
   return (
     <>
       <Typography variant="h4" component="h1" gutterBottom>
         We're on the Gateway!
       </Typography>
-      <Button variant="contained" onClick={fetchUserData}>
-        List Users
-      </Button>
-      <textarea value={userData} readOnly></textarea>
+      <Suspense fallback={<CircularProgress />}>
+        {queryReference != null ? (
+          <UserListComponent queryRef={queryReference} />
+        ) : null}
+      </Suspense>
     </>
   );
 };
