@@ -2,6 +2,13 @@ import { FunctionComponent } from "react";
 import { UserListPaginationQuery } from "../generated/relay/UserListPaginationQuery.graphql";
 import { UserList_query$key } from "../generated/relay/UserList_query.graphql";
 import { graphql, usePaginationFragment } from "react-relay";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 
 interface Props {
   query: UserList_query$key;
@@ -31,7 +38,30 @@ const UserList: FunctionComponent<Props> = (props) => {
     props.query
   );
 
-  return <div>{JSON.stringify(data, undefined, 2)}</div>;
+  return (
+    <TableContainer component={Paper}>
+      <Table aria-label="users table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Email</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.users?.edges?.map((edge) => {
+            const user = edge?.node;
+            return user != null ? (
+              <TableRow
+                key={user.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell>{user.email}</TableCell>
+              </TableRow>
+            ) : null;
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 };
 
 export default UserList;
