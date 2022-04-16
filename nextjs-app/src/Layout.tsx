@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { FunctionComponent } from "react";
+import { FunctionComponent, PropsWithChildren } from "react";
 import Copyright from "./Copyright";
 import ResponsiveAppBar from "./nav/ResponsiveAppBar";
 
-const Layout: FunctionComponent = ({ children }) => {
+const Layout: FunctionComponent<PropsWithChildren<{}>> = ({ children }) => {
   return (
     <>
       <ResponsiveAppBar />
