@@ -77,6 +77,11 @@ export class AltmetaOrgStack extends Stack {
       resources: [userPool.userPoolArn],
     });
 
+    const cognitoAdminAddRemoveUserStatement = new PolicyStatement({
+      actions: ["cognito-idp:AdminCreateUser", "cognito-idp:AdminDeleteUser"],
+      resources: [userPool.userPoolArn],
+    });
+
     const authenticatedUserPolicy = new ManagedPolicy(
       this,
       "AuthenticatedUserPolicy"
@@ -84,7 +89,8 @@ export class AltmetaOrgStack extends Stack {
     authenticatedUserPolicy.addStatements(
       userDataListStatement,
       userDataAccessStatement,
-      cognitoListUserStatement
+      cognitoListUserStatement,
+      cognitoAdminAddRemoveUserStatement
     );
 
     const identityPool = new IdentityPool(this, "IdentityPool");
