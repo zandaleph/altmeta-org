@@ -12,7 +12,7 @@ import {
 } from "react-relay";
 import { gatewayQuery } from "../generated/relay/gatewayQuery.graphql";
 import AddUserButton from "../src/user/AddUserButton";
-import UserList from "../src/UserList";
+import UserList from "../src/user/UserList";
 
 const query = graphql`
   query gatewayQuery($count: Int!, $cursor: String) {

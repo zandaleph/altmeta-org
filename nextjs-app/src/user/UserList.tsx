@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
-import { UserListPaginationQuery } from "../generated/relay/UserListPaginationQuery.graphql";
-import { UserList_query$key } from "../generated/relay/UserList_query.graphql";
+import { UserListPaginationQuery } from "../../generated/relay/UserListPaginationQuery.graphql";
+import { UserList_query$key } from "../../generated/relay/UserList_query.graphql";
 import { graphql, usePaginationFragment } from "react-relay";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
