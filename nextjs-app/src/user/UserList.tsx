@@ -10,6 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import AddUserButton from "./AddUserButton";
+import DeleteUserButton from "./DeleteUserButton";
 
 interface Props {
   query: UserList_query$key;
@@ -32,6 +33,7 @@ const UserList: FunctionComponent<Props> = (props) => {
               ... on EmailUser {
                 email
               }
+              ...DeleteUserButton_user
             }
           }
         }
@@ -47,6 +49,7 @@ const UserList: FunctionComponent<Props> = (props) => {
           <TableHead>
             <TableRow>
               <TableCell>Email</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -58,6 +61,15 @@ const UserList: FunctionComponent<Props> = (props) => {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    {/* Placeholder until we have "admin" users */}
+                    {user.email != "admin@altmeta.org" ? (
+                      <DeleteUserButton
+                        user={user}
+                        connectionId={data.users?.__id ?? ""}
+                      />
+                    ) : null}
+                  </TableCell>
                 </TableRow>
               ) : null;
             })}

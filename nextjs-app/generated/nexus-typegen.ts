@@ -50,7 +50,7 @@ export interface NexusGenObjects {
     user?: NexusGenRootTypes['User'] | null; // User
   }
   DeleteUserPayload: { // root type
-    id?: string | null; // ID
+    deletedId?: string | null; // ID
   }
   EmailUser: { // root type
     email?: string | null; // String
@@ -90,7 +90,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User'] | null; // User
   }
   DeleteUserPayload: { // field return type
-    id: string | null; // ID
+    deletedId: string | null; // ID
   }
   EmailUser: { // field return type
     email: string | null; // String
@@ -127,7 +127,7 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   DeleteUserPayload: { // field return type name
-    id: 'ID'
+    deletedId: 'ID'
   }
   EmailUser: { // field return type name
     email: 'String'

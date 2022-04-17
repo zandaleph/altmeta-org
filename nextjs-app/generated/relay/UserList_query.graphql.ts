@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f7dcb1858ff319dd35733437d183a71d>>
+ * @generated SignedSource<<6afabcc9aac2c3bbfdbaccf1db7bdb84>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type UserList_query$data = {
       readonly node: {
         readonly id: string | null;
         readonly email?: string | null;
+        readonly " $fragmentSpreads": FragmentRefs<"DeleteUserButton_user">;
       } | null;
     } | null> | null;
   } | null;
@@ -113,6 +114,11 @@ return {
                   "abstractKey": null
                 },
                 {
+                  "args": null,
+                  "kind": "FragmentSpread",
+                  "name": "DeleteUserButton_user"
+                },
+                {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
@@ -178,6 +184,6 @@ return {
 };
 })();
 
-(node as any).hash = "012b110151d218ba6d03430192276d22";
+(node as any).hash = "818d1c9c60e638ac5a934644e03723be";
 
 export default node;

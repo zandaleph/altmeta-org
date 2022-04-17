@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<de6b8163df6c7c95c93c0af7d8f9ca19>>
+ * @generated SignedSource<<2d3c0fdd62facdd31bffdff24d9ae386>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -120,6 +120,10 @@ return {
                     ],
                     "type": "EmailUser",
                     "abstractKey": null
+                  },
+                  {
+                    "kind": "TypeDiscriminator",
+                    "abstractKey": "__isUser"
                   }
                 ],
                 "storageKey": null
@@ -186,16 +190,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "762d837a40cb2d492f0e0ebdbe510a8f",
+    "cacheID": "cbe35a21272eb655e62d5c3b56b255b3",
     "id": null,
     "metadata": {},
     "name": "UserListPaginationQuery",
     "operationKind": "query",
-    "text": "query UserListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        ... on EmailUser {\n          email\n        }\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query UserListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        ... on EmailUser {\n          email\n        }\n        ...DeleteUserButton_user\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "012b110151d218ba6d03430192276d22";
+(node as any).hash = "818d1c9c60e638ac5a934644e03723be";
 
 export default node;

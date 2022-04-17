@@ -17,7 +17,7 @@ const DeleteUserInput = inputObjectType({
 const DeleteUserPayload = objectType({
   name: "DeleteUserPayload",
   definition(t) {
-    t.id("id");
+    t.id("deletedId");
   },
 });
 
@@ -35,7 +35,7 @@ export default mutationField("deleteUser", {
     const userService = new UserService(ctx.session.bearerToken);
     await userService.deleteUser(sub);
     return {
-      id,
+      deletedId: id,
     };
   },
 });

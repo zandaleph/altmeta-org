@@ -15,7 +15,7 @@ input DeleteUserInput {
 }
 
 type DeleteUserPayload {
-  id: ID
+  deletedId: ID
 }
 
 type EmailUser implements User {
