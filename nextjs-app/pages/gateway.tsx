@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { NextPage } from "next";
@@ -10,6 +11,7 @@ import {
   usePreloadedQuery,
 } from "react-relay";
 import { gatewayQuery } from "../generated/relay/gatewayQuery.graphql";
+import AddUserButton from "../src/user/AddUserButton";
 import UserList from "../src/UserList";
 
 const query = graphql`
@@ -24,7 +26,12 @@ interface Props {
 
 const UserListComponent: FunctionComponent<Props> = (props) => {
   const data = usePreloadedQuery<gatewayQuery>(query, props.queryRef);
-  return <UserList query={data} />;
+  return (
+    <Box>
+      <UserList query={data} />
+      <AddUserButton />
+    </Box>
+  );
 };
 
 const Gateway: NextPage = () => {

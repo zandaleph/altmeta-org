@@ -30,13 +30,15 @@
     "react": "latest",
     "react-dom": "latest",
     "react-relay": "^13.2.0",
-    "relay-runtime": "^13.2.0"
+    "relay-runtime": "^13.2.0",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-relay": "^13.0.2",
     "@types/relay-runtime": "^13.0.3",
+    "@types/validator": "^13.7.2",
     "babel-plugin-relay": "^13.2.0",
     "eslint": "latest",
     "eslint-config-next": "latest",
