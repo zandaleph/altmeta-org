@@ -9,6 +9,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import AddUserButton from "./AddUserButton";
 
 interface Props {
   query: UserList_query$key;
@@ -24,6 +25,7 @@ const UserList: FunctionComponent<Props> = (props) => {
       @refetchable(queryName: "UserListPaginationQuery") {
         users(first: $count, after: $cursor)
           @connection(key: "UserList_query_users") {
+          __id
           edges {
             node {
               id
@@ -39,28 +41,31 @@ const UserList: FunctionComponent<Props> = (props) => {
   );
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="users table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Email</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.users?.edges?.map((edge) => {
-            const user = edge?.node;
-            return user != null ? (
-              <TableRow
-                key={user.id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell>{user.email}</TableCell>
-              </TableRow>
-            ) : null;
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <TableContainer component={Paper}>
+        <Table aria-label="users table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Email</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.users?.edges?.map((edge) => {
+              const user = edge?.node;
+              return user != null ? (
+                <TableRow
+                  key={user.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell>{user.email}</TableCell>
+                </TableRow>
+              ) : null;
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <AddUserButton connectionId={data.users?.__id ?? ""} />
+    </>
   );
 };
 

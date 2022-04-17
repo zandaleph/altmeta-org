@@ -29,7 +29,6 @@ const UserListComponent: FunctionComponent<Props> = (props) => {
   return (
     <Box>
       <UserList query={data} />
-      <AddUserButton />
     </Box>
   );
 };

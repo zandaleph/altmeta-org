@@ -10,15 +10,35 @@ import DialogTitle from "@mui/material/DialogTitle";
 import isEmail from "validator/lib/isEmail";
 import InputAdornment from "@mui/material/InputAdornment";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { graphql, useMutation } from "react-relay";
+import { AddUserButtonMutation } from "../../generated/relay/AddUserButtonMutation.graphql";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface UserState {
   email: string;
   isValid: boolean;
 }
 
-const AddUserButton: FunctionComponent = () => {
+interface Props {
+  connectionId: string;
+}
+
+const AddUserButton: FunctionComponent<Props> = ({ connectionId }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [user, setUser] = useState<UserState>({ email: "", isValid: false });
+  const [commit, isInFlight] = useMutation<AddUserButtonMutation>(graphql`
+    mutation AddUserButtonMutation($email: String!, $connectionId: ID!) {
+      createUser(input: { email: $email }) {
+        user
+          @appendNode(connections: [$connectionId], edgeTypeName: "UserEdge") {
+          id
+          ... on EmailUser {
+            email
+          }
+        }
+      }
+    }
+  `);
 
   const handleClose = () => setOpen(false);
   return (
@@ -63,9 +83,13 @@ const AddUserButton: FunctionComponent = () => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button
-            disabled={!user.isValid}
+            disabled={!user.isValid && !isInFlight}
+            startIcon={isInFlight ? <CircularProgress /> : undefined}
             onClick={() => {
-              console.log(user.email);
+              commit({
+                variables: { email: user.email, connectionId },
+                onCompleted: handleClose,
+              });
             }}
           >
             Subscribe
