@@ -1,10 +1,11 @@
 import { makeSchema, connectionPlugin } from "nexus";
 import path from "path";
 import * as QueryTypes from "./query";
+import * as MutationTypes from "./mutation";
 import * as Types from "./types";
 
 const schema = makeSchema({
-  types: [Types, QueryTypes],
+  types: [Types, QueryTypes, MutationTypes],
   features: {
     abstractTypeStrategies: {
       __typename: true,

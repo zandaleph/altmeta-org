@@ -2,9 +2,21 @@
 ### Do not make changes to this file directly
 
 
+input CreateUserInput {
+  email: String
+}
+
+type CreateUserPayload {
+  user: User
+}
+
 type EmailUser implements User {
   email: String
   id: ID
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): CreateUserPayload
 }
 
 """

@@ -7,7 +7,7 @@
     "build": "npm run relay && next build",
     "start": "next start",
     "lint": "next lint",
-    "nexus-typegen": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' --transpile-only schema",
+    "nexus-typegen": "NODE_ENV=development ts-node --compiler-options '{\"module\":\"CommonJS\"}' --transpile-only schema",
     "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
     "relay": "relay-compiler"
   },
