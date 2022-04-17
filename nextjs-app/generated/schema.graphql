@@ -10,6 +10,14 @@ type CreateUserPayload {
   user: User
 }
 
+input DeleteUserInput {
+  id: ID
+}
+
+type DeleteUserPayload {
+  id: ID
+}
+
 type EmailUser implements User {
   email: String
   id: ID
@@ -17,6 +25,7 @@ type EmailUser implements User {
 
 type Mutation {
   createUser(input: CreateUserInput!): CreateUserPayload
+  deleteUser(input: DeleteUserInput!): DeleteUserPayload
 }
 
 """

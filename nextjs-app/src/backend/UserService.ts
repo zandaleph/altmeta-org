@@ -1,6 +1,7 @@
 import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import {
   AdminCreateUserCommand,
+  AdminDeleteUserCommand,
   CognitoIdentityProviderClient,
   ListUsersCommand,
   UserType,
@@ -76,6 +77,15 @@ export default class UserService {
     }
 
     return this.convertUser(result.User);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await this.client.send(
+      new AdminDeleteUserCommand({
+        UserPoolId: this.userPoolId,
+        Username: id,
+      })
+    );
   }
 
   private convertUser(user: UserType): User {

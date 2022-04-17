@@ -29,6 +29,9 @@ export interface NexusGenInputs {
   CreateUserInput: { // input type
     email?: string | null; // String
   }
+  DeleteUserInput: { // input type
+    id?: string | null; // ID
+  }
 }
 
 export interface NexusGenEnums {
@@ -45,6 +48,9 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   CreateUserPayload: { // root type
     user?: NexusGenRootTypes['User'] | null; // User
+  }
+  DeleteUserPayload: { // root type
+    id?: string | null; // ID
   }
   EmailUser: { // root type
     email?: string | null; // String
@@ -83,12 +89,16 @@ export interface NexusGenFieldTypes {
   CreateUserPayload: { // field return type
     user: NexusGenRootTypes['User'] | null; // User
   }
+  DeleteUserPayload: { // field return type
+    id: string | null; // ID
+  }
   EmailUser: { // field return type
     email: string | null; // String
     id: string | null; // ID
   }
   Mutation: { // field return type
     createUser: NexusGenRootTypes['CreateUserPayload'] | null; // CreateUserPayload
+    deleteUser: NexusGenRootTypes['DeleteUserPayload'] | null; // DeleteUserPayload
   }
   PageInfo: { // field return type
     endCursor: string | null; // String
@@ -116,12 +126,16 @@ export interface NexusGenFieldTypeNames {
   CreateUserPayload: { // field return type name
     user: 'User'
   }
+  DeleteUserPayload: { // field return type name
+    id: 'ID'
+  }
   EmailUser: { // field return type name
     email: 'String'
     id: 'ID'
   }
   Mutation: { // field return type name
     createUser: 'CreateUserPayload'
+    deleteUser: 'DeleteUserPayload'
   }
   PageInfo: { // field return type name
     endCursor: 'String'
@@ -149,6 +163,9 @@ export interface NexusGenArgTypes {
   Mutation: {
     createUser: { // args
       input: NexusGenInputs['CreateUserInput']; // CreateUserInput!
+    }
+    deleteUser: { // args
+      input: NexusGenInputs['DeleteUserInput']; // DeleteUserInput!
     }
   }
   Query: {
