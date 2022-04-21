@@ -75,7 +75,15 @@ export default NextAuth({
       clientId: process.env.COGNITO_CLIENT_ID ?? "",
       clientSecret: process.env.COGNITO_CLIENT_SECRET ?? "",
       issuer: `https://${process.env.COGNITO_ISSUER}`,
-      idToken: true,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+          isAdmin: profile["custom:is_admin"],
+        };
+      },
     }),
   ],
   callbacks: {
