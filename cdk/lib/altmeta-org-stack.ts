@@ -8,10 +8,11 @@ import {
 } from "aws-cdk-lib";
 import { InitialUserTrigger } from "./initial-user-trigger";
 import {
-  IdentityPool,
-  UserPoolAuthenticationProvider,
-} from "@aws-cdk/aws-cognito-identitypool-alpha";
-import { ManagedPolicy, PolicyStatement } from "aws-cdk-lib/aws-iam";
+  ManagedPolicy,
+  PolicyStatement,
+  Role,
+  WebIdentityPrincipal,
+} from "aws-cdk-lib/aws-iam";
 
 export interface AltmetaOrgStackProps extends StackProps {
   domainPrefix?: string;
@@ -98,22 +99,82 @@ export class AltmetaOrgStack extends Stack {
     );
     authenticatedUserPolicy.addStatements(
       userDataListStatement,
+      userDataAccessStatement
+    );
+
+    const adminUserPolicy = new ManagedPolicy(this, "AdminUserPolicy");
+    adminUserPolicy.addStatements(
+      userDataListStatement,
       userDataAccessStatement,
       cognitoListUserStatement,
       cognitoAdminAddRemoveUserStatement
     );
 
-    const identityPool = new IdentityPool(this, "IdentityPool");
+    const identityPool = new cognito.CfnIdentityPool(this, "IdentityPool", {
+      allowUnauthenticatedIdentities: false,
+      cognitoIdentityProviders: [
+        {
+          clientId: userPoolClient.userPoolClientId,
+          providerName: userPool.userPoolProviderName,
+        },
+      ],
+    });
 
-    identityPool.addUserPoolAuthentication(
-      new UserPoolAuthenticationProvider({
-        userPool,
-        disableServerSideTokenCheck: true,
-        userPoolClient,
-      })
+    const authenticatedUserRole = new Role(this, "AuthenticatedUserRole", {
+      assumedBy: new WebIdentityPrincipal("cognito-identity.amazonaws.com", {
+        StringEquals: {
+          "cognito-identity.amazonaws.com:aud": identityPool.ref,
+        },
+        "ForAnyValue:StringLike": {
+          "cognito-identity.amazonaws.com:amr": "authenticated",
+        },
+      }),
+    });
+    authenticatedUserRole.addManagedPolicy(authenticatedUserPolicy);
+
+    const adminRole = new Role(this, "AdminRole", {
+      assumedBy: new WebIdentityPrincipal("cognito-identity.amazonaws.com", {
+        StringEquals: {
+          "cognito-identity.amazonaws.com:aud": identityPool.ref,
+        },
+        "ForAnyValue:StringLike": {
+          "cognito-identity.amazonaws.com:amr": "authenticated",
+        },
+      }),
+    });
+    adminRole.addManagedPolicy(adminUserPolicy);
+
+    new cognito.CfnIdentityPoolRoleAttachment(
+      this,
+      "identity-pool-role-attachment",
+      {
+        identityPoolId: identityPool.ref,
+        roles: {
+          authenticated: authenticatedUserRole.roleArn,
+        },
+        roleMappings: {
+          mapping: {
+            type: "Rules",
+            ambiguousRoleResolution: "AuthenticatedRole",
+            identityProvider: `cognito-idp.${
+              Stack.of(this).region
+            }.amazonaws.com/${userPool.userPoolId}:${
+              userPoolClient.userPoolClientId
+            }`,
+            rulesConfiguration: {
+              rules: [
+                {
+                  claim: "custom:is_admin",
+                  matchType: "Equals",
+                  value: "true",
+                  roleArn: adminRole.roleArn,
+                },
+              ],
+            },
+          },
+        },
+      }
     );
-
-    identityPool.authenticatedRole.addManagedPolicy(authenticatedUserPolicy);
 
     new InitialUserTrigger(this, "UserTrigger", {
       stackName: domainPrefix,
