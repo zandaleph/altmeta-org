@@ -30,6 +30,7 @@ const UserList: FunctionComponent<Props> = (props) => {
           edges {
             node {
               id
+              isAdmin
               ... on EmailUser {
                 email
               }
@@ -63,12 +64,12 @@ const UserList: FunctionComponent<Props> = (props) => {
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     {/* Placeholder until we have "admin" users */}
-                    {user.email != "admin@altmeta.org" ? (
+                    {user.isAdmin ? null : (
                       <DeleteUserButton
                         user={user}
                         connectionId={data.users?.__id ?? ""}
                       />
-                    ) : null}
+                    )}
                   </TableCell>
                 </TableRow>
               ) : null;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6afabcc9aac2c3bbfdbaccf1db7bdb84>>
+ * @generated SignedSource<<0f972ec3272e8bc8d3cc39ef64b7e3f6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type UserList_query$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string | null;
+        readonly isAdmin: boolean | null;
         readonly email?: string | null;
         readonly " $fragmentSpreads": FragmentRefs<"DeleteUserButton_user">;
       } | null;
@@ -97,6 +98,13 @@ return {
                   "args": null,
                   "kind": "ScalarField",
                   "name": "id",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "isAdmin",
                   "storageKey": null
                 },
                 {
@@ -184,6 +192,6 @@ return {
 };
 })();
 
-(node as any).hash = "818d1c9c60e638ac5a934644e03723be";
+(node as any).hash = "cb8f55a6584f0724e3d6ecd2cc48fdf5";
 
 export default node;

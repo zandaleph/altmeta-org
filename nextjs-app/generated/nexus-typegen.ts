@@ -55,6 +55,7 @@ export interface NexusGenObjects {
   EmailUser: { // root type
     email?: string | null; // String
     id?: string | null; // ID
+    isAdmin?: boolean | null; // Boolean
   }
   Mutation: {};
   PageInfo: { // root type
@@ -95,6 +96,7 @@ export interface NexusGenFieldTypes {
   EmailUser: { // field return type
     email: string | null; // String
     id: string | null; // ID
+    isAdmin: boolean | null; // Boolean
   }
   Mutation: { // field return type
     createUser: NexusGenRootTypes['CreateUserPayload'] | null; // CreateUserPayload
@@ -119,6 +121,7 @@ export interface NexusGenFieldTypes {
   }
   User: { // field return type
     id: string | null; // ID
+    isAdmin: boolean | null; // Boolean
   }
 }
 
@@ -132,6 +135,7 @@ export interface NexusGenFieldTypeNames {
   EmailUser: { // field return type name
     email: 'String'
     id: 'ID'
+    isAdmin: 'Boolean'
   }
   Mutation: { // field return type name
     createUser: 'CreateUserPayload'
@@ -156,6 +160,7 @@ export interface NexusGenFieldTypeNames {
   }
   User: { // field return type name
     id: 'ID'
+    isAdmin: 'Boolean'
   }
 }
 

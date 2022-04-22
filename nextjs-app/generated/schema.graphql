@@ -21,6 +21,7 @@ type DeleteUserPayload {
 type EmailUser implements User {
   email: String
   id: ID
+  isAdmin: Boolean
 }
 
 type Mutation {
@@ -65,6 +66,7 @@ type Query {
 
 interface User {
   id: ID
+  isAdmin: Boolean
 }
 
 type UserConnection {

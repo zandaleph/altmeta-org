@@ -16,6 +16,7 @@ export default queryField((t) => {
             __typename: "EmailUser" as const,
             id: `EmailUser:${user.id}`,
             email: user.email,
+            isAdmin: user.isAdmin,
           },
           cursor: "",
         };

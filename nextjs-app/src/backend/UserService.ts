@@ -10,6 +10,7 @@ import {
 export interface User {
   id: string;
   email: string;
+  isAdmin: boolean;
 }
 
 export interface ListUsersResult {
@@ -96,6 +97,10 @@ export default class UserService {
           ...(attr.Name ? { [attr.Name]: attr.Value } : {}),
         };
       }, {}) ?? {};
-    return { id: attributes.sub, email: attributes.email };
+    return {
+      id: attributes.sub,
+      email: attributes.email,
+      isAdmin: attributes["custom:is_admin"] == "true",
+    };
   }
 }

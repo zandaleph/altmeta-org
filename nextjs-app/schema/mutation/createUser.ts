@@ -39,6 +39,7 @@ export default mutationField("createUser", {
         __typename: "EmailUser" as const,
         id: `EmailUser:${user.id}`,
         email: user.email,
+        isAdmin: user.isAdmin,
       },
     };
   },

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9ede32f0dccf075194b533793f67db38>>
+ * @generated SignedSource<<e6c580f3c89f3c3f5e82a1d3d033bbfa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -108,6 +108,13 @@ return {
                     "storageKey": null
                   },
                   {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "isAdmin",
+                    "storageKey": null
+                  },
+                  {
                     "kind": "InlineFragment",
                     "selections": [
                       {
@@ -190,12 +197,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bd562509b27831978fbdabe1e11e2c15",
+    "cacheID": "44c03cb5b863583f85fdd58f7fcf0eff",
     "id": null,
     "metadata": {},
     "name": "gatewayQuery",
     "operationKind": "query",
-    "text": "query gatewayQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        ... on EmailUser {\n          email\n        }\n        ...DeleteUserButton_user\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query gatewayQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        isAdmin\n        ... on EmailUser {\n          email\n        }\n        ...DeleteUserButton_user\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

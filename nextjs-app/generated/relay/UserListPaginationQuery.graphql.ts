@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d3c0fdd62facdd31bffdff24d9ae386>>
+ * @generated SignedSource<<cb6ac6e21c7e2fdceba175e4f5193824>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -108,6 +108,13 @@ return {
                     "storageKey": null
                   },
                   {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "isAdmin",
+                    "storageKey": null
+                  },
+                  {
                     "kind": "InlineFragment",
                     "selections": [
                       {
@@ -190,16 +197,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cbe35a21272eb655e62d5c3b56b255b3",
+    "cacheID": "1e4330721c99b119d282e1442396a03d",
     "id": null,
     "metadata": {},
     "name": "UserListPaginationQuery",
     "operationKind": "query",
-    "text": "query UserListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        ... on EmailUser {\n          email\n        }\n        ...DeleteUserButton_user\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query UserListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        isAdmin\n        ... on EmailUser {\n          email\n        }\n        ...DeleteUserButton_user\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "818d1c9c60e638ac5a934644e03723be";
+(node as any).hash = "cb8f55a6584f0724e3d6ecd2cc48fdf5";
 
 export default node;
