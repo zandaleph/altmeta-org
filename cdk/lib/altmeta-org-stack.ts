@@ -34,6 +34,9 @@ export class AltmetaOrgStack extends Stack {
           mutable: false,
         },
       },
+      customAttributes: {
+        is_admin: new cognito.BooleanAttribute({ mutable: true }),
+      },
     });
     const userPoolClient = userPool.addClient("Website", {
       oAuth: {
@@ -50,6 +53,12 @@ export class AltmetaOrgStack extends Stack {
       },
       generateSecret: true,
       userPoolClientName: "website",
+      readAttributes: new cognito.ClientAttributes()
+        .withStandardAttributes({ email: true, emailVerified: true })
+        .withCustomAttributes("is_admin"),
+      writeAttributes: new cognito.ClientAttributes().withStandardAttributes({
+        email: true,
+      }),
     });
     userPool.addDomain("Domain", { cognitoDomain: { domainPrefix } });
 

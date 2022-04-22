@@ -31,6 +31,7 @@ export async function main(
     UserAttributes: [
       { Name: "email", Value: adminUsername },
       { Name: "email_verified", Value: "True" },
+      { Name: "custom:is_admin", Value: "true" },
     ],
   });
 
