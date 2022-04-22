@@ -2,6 +2,8 @@ import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import {
   AdminCreateUserCommand,
   AdminDeleteUserCommand,
+  AdminGetUserCommand,
+  AttributeType,
   CognitoIdentityProviderClient,
   ListUsersCommand,
   UserType,
@@ -81,6 +83,16 @@ export default class UserService {
   }
 
   async deleteUser(id: string): Promise<void> {
+    const result = await this.client.send(
+      new AdminGetUserCommand({
+        UserPoolId: this.userPoolId,
+        Username: id,
+      })
+    );
+    const user = this.convertAttributes(result.UserAttributes);
+    if (user.isAdmin) {
+      throw new Error("Can't delete admin users");
+    }
     await this.client.send(
       new AdminDeleteUserCommand({
         UserPoolId: this.userPoolId,
@@ -90,8 +102,12 @@ export default class UserService {
   }
 
   private convertUser(user: UserType): User {
+    return this.convertAttributes(user.Attributes);
+  }
+
+  private convertAttributes(userAttributes: AttributeType[] | undefined) {
     const attributes: Record<string, string> =
-      user.Attributes?.reduce((attrs, attr) => {
+      userAttributes?.reduce((attrs, attr) => {
         return {
           ...attrs,
           ...(attr.Name ? { [attr.Name]: attr.Value } : {}),

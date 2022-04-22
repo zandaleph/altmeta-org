@@ -89,7 +89,11 @@ export class AltmetaOrgStack extends Stack {
     });
 
     const cognitoAdminAddRemoveUserStatement = new PolicyStatement({
-      actions: ["cognito-idp:AdminCreateUser", "cognito-idp:AdminDeleteUser"],
+      actions: [
+        "cognito-idp:AdminGetUser",
+        "cognito-idp:AdminCreateUser",
+        "cognito-idp:AdminDeleteUser",
+      ],
       resources: [userPool.userPoolArn],
     });
 
