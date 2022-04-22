@@ -46,6 +46,7 @@ export class AltmetaOrgStack extends Stack {
           cognito.OAuthScope.PROFILE,
         ],
         callbackUrls: ["http://localhost:3000/api/auth/callback/cognito"],
+        logoutUrls: ["http://localhost:3000/logout"],
       },
       generateSecret: true,
       userPoolClientName: "website",
