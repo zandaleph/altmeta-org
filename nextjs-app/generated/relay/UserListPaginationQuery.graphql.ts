@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cb6ac6e21c7e2fdceba175e4f5193824>>
+ * @generated SignedSource<<ec0f45222dd43b0f61ea40dda54fb6eb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -101,6 +101,10 @@ return {
                     "storageKey": null
                   },
                   {
+                    "kind": "TypeDiscriminator",
+                    "abstractKey": "__isUser"
+                  },
+                  {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
@@ -127,10 +131,6 @@ return {
                     ],
                     "type": "EmailUser",
                     "abstractKey": null
-                  },
-                  {
-                    "kind": "TypeDiscriminator",
-                    "abstractKey": "__isUser"
                   }
                 ],
                 "storageKey": null
@@ -197,16 +197,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1e4330721c99b119d282e1442396a03d",
+    "cacheID": "63cdb4c1ee078bf4a2a9aab39099a976",
     "id": null,
     "metadata": {},
     "name": "UserListPaginationQuery",
     "operationKind": "query",
-    "text": "query UserListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        isAdmin\n        ... on EmailUser {\n          email\n        }\n        ...DeleteUserButton_user\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query UserListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        ...UserRow_user\n        id\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment UserRow_user on User {\n  __isUser: __typename\n  id\n  isAdmin\n  ... on EmailUser {\n    email\n  }\n  ...DeleteUserButton_user\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cb8f55a6584f0724e3d6ecd2cc48fdf5";
+(node as any).hash = "5a9a2696b893109f09c512b61db44d14";
 
 export default node;

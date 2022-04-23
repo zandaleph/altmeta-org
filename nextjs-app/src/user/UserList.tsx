@@ -10,7 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import AddUserButton from "./AddUserButton";
-import DeleteUserButton from "./DeleteUserButton";
+import UserRow from "./UserRow";
 
 interface Props {
   query: UserList_query$key;
@@ -29,12 +29,7 @@ const UserList: FunctionComponent<Props> = (props) => {
           __id
           edges {
             node {
-              id
-              isAdmin
-              ... on EmailUser {
-                email
-              }
-              ...DeleteUserButton_user
+              ...UserRow_user
             }
           }
         }
@@ -57,21 +52,7 @@ const UserList: FunctionComponent<Props> = (props) => {
             {data.users?.edges?.map((edge) => {
               const user = edge?.node;
               return user != null ? (
-                <TableRow
-                  key={user.id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    {/* Placeholder until we have "admin" users */}
-                    {user.isAdmin ? null : (
-                      <DeleteUserButton
-                        user={user}
-                        connectionId={data.users?.__id ?? ""}
-                      />
-                    )}
-                  </TableCell>
-                </TableRow>
+                <UserRow user={user} connectionId={data.users?.__id ?? ""} />
               ) : null;
             })}
           </TableBody>

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fb0239ac1760f6101ed6c60f1790d167>>
+ * @generated SignedSource<<4f8031298edd12d78db12b698755b39c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Mutation } from 'relay-runtime';
+import { FragmentRefs } from "relay-runtime";
 export type AddUserButtonMutation$variables = {
   email: string;
   connectionId: string;
@@ -17,7 +18,7 @@ export type AddUserButtonMutation$data = {
   readonly createUser: {
     readonly user: {
       readonly id: string | null;
-      readonly email?: string | null;
+      readonly " $fragmentSpreads": FragmentRefs<"UserRow_user">;
     } | null;
   } | null;
 };
@@ -56,20 +57,6 @@ v3 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-},
-v4 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "email",
-      "storageKey": null
-    }
-  ],
-  "type": "EmailUser",
-  "abstractKey": null
 };
 return {
   "fragment": {
@@ -98,7 +85,11 @@ return {
             "plural": false,
             "selections": [
               (v3/*: any*/),
-              (v4/*: any*/)
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "UserRow_user"
+              }
             ],
             "storageKey": null
           }
@@ -142,7 +133,31 @@ return {
                 "storageKey": null
               },
               (v3/*: any*/),
-              (v4/*: any*/)
+              {
+                "kind": "TypeDiscriminator",
+                "abstractKey": "__isUser"
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "isAdmin",
+                "storageKey": null
+              },
+              {
+                "kind": "InlineFragment",
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "email",
+                    "storageKey": null
+                  }
+                ],
+                "type": "EmailUser",
+                "abstractKey": null
+              }
             ],
             "storageKey": null
           },
@@ -179,16 +194,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c2d311b4adc608ed1aaed6ef5811cfc4",
+    "cacheID": "d08f39ede47542c8cb1a205e40ed5aa1",
     "id": null,
     "metadata": {},
     "name": "AddUserButtonMutation",
     "operationKind": "mutation",
-    "text": "mutation AddUserButtonMutation(\n  $email: String!\n) {\n  createUser(input: {email: $email}) {\n    user {\n      __typename\n      id\n      ... on EmailUser {\n        email\n      }\n    }\n  }\n}\n"
+    "text": "mutation AddUserButtonMutation(\n  $email: String!\n) {\n  createUser(input: {email: $email}) {\n    user {\n      __typename\n      id\n      ...UserRow_user\n    }\n  }\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserRow_user on User {\n  __isUser: __typename\n  id\n  isAdmin\n  ... on EmailUser {\n    email\n  }\n  ...DeleteUserButton_user\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ede9321a6c5d39c1baaa1e2f07df3d8e";
+(node as any).hash = "aa08bc518055a5af989dd50bc80cfd0a";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e6c580f3c89f3c3f5e82a1d3d033bbfa>>
+ * @generated SignedSource<<b7f4f9c11045568d5e4d98ab371dcc85>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -101,6 +101,10 @@ return {
                     "storageKey": null
                   },
                   {
+                    "kind": "TypeDiscriminator",
+                    "abstractKey": "__isUser"
+                  },
+                  {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
@@ -127,10 +131,6 @@ return {
                     ],
                     "type": "EmailUser",
                     "abstractKey": null
-                  },
-                  {
-                    "kind": "TypeDiscriminator",
-                    "abstractKey": "__isUser"
                   }
                 ],
                 "storageKey": null
@@ -197,12 +197,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "44c03cb5b863583f85fdd58f7fcf0eff",
+    "cacheID": "0c4fbc454e4f05947090415197012ef6",
     "id": null,
     "metadata": {},
     "name": "gatewayQuery",
     "operationKind": "query",
-    "text": "query gatewayQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        id\n        isAdmin\n        ... on EmailUser {\n          email\n        }\n        ...DeleteUserButton_user\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query gatewayQuery(\n  $count: Int!\n  $cursor: String\n) {\n  ...UserList_query\n}\n\nfragment DeleteUserButton_user on User {\n  __isUser: __typename\n  id\n  ... on EmailUser {\n    email\n  }\n}\n\nfragment UserList_query on Query {\n  users(first: $count, after: $cursor) {\n    edges {\n      node {\n        __typename\n        ...UserRow_user\n        id\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment UserRow_user on User {\n  __isUser: __typename\n  id\n  isAdmin\n  ... on EmailUser {\n    email\n  }\n  ...DeleteUserButton_user\n}\n"
   }
 };
 })();

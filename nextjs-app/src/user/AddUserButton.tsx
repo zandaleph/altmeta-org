@@ -32,9 +32,7 @@ const AddUserButton: FunctionComponent<Props> = ({ connectionId }) => {
         user
           @appendNode(connections: [$connectionId], edgeTypeName: "UserEdge") {
           id
-          ... on EmailUser {
-            email
-          }
+          ...UserRow_user
         }
       }
     }

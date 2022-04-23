@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f972ec3272e8bc8d3cc39ef64b7e3f6>>
+ * @generated SignedSource<<3b5aa4666adacb0c86635f4eb3808f48>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,10 +15,7 @@ export type UserList_query$data = {
     readonly __id: string;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly id: string | null;
-        readonly isAdmin: boolean | null;
-        readonly email?: string | null;
-        readonly " $fragmentSpreads": FragmentRefs<"DeleteUserButton_user">;
+        readonly " $fragmentSpreads": FragmentRefs<"UserRow_user">;
       } | null;
     } | null> | null;
   } | null;
@@ -94,37 +91,9 @@ return {
               "plural": false,
               "selections": [
                 {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "id",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "isAdmin",
-                  "storageKey": null
-                },
-                {
-                  "kind": "InlineFragment",
-                  "selections": [
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "email",
-                      "storageKey": null
-                    }
-                  ],
-                  "type": "EmailUser",
-                  "abstractKey": null
-                },
-                {
                   "args": null,
                   "kind": "FragmentSpread",
-                  "name": "DeleteUserButton_user"
+                  "name": "UserRow_user"
                 },
                 {
                   "alias": null,
@@ -192,6 +161,6 @@ return {
 };
 })();
 
-(node as any).hash = "cb8f55a6584f0724e3d6ecd2cc48fdf5";
+(node as any).hash = "5a9a2696b893109f09c512b61db44d14";
 
 export default node;
