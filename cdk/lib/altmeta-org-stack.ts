@@ -108,8 +108,6 @@ export class AltmetaOrgStack extends Stack {
 
     const adminUserPolicy = new ManagedPolicy(this, "AdminUserPolicy");
     adminUserPolicy.addStatements(
-      userDataListStatement,
-      userDataAccessStatement,
       cognitoListUserStatement,
       cognitoAdminAddRemoveUserStatement
     );
@@ -146,6 +144,7 @@ export class AltmetaOrgStack extends Stack {
         },
       }),
     });
+    adminRole.addManagedPolicy(authenticatedUserPolicy);
     adminRole.addManagedPolicy(adminUserPolicy);
 
     new cognito.CfnIdentityPoolRoleAttachment(
