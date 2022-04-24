@@ -94,6 +94,7 @@ CloudFormation stack and prints environment variables for the frontend website.
 [AWS CLI is setup]: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html "AWS Command Line Interface Quick Setup"
 [initial user trigger]: lib/initial-user-trigger.ts "Deploy-time trigger to setup initial user"
 [initial-user-handler.ts]: lib/initial-user-handler.ts "Handler to setup initial user"
+[Website README]: ../nextjs-app/README.md "Docs for frontend website code"
 [top level stack]: lib/altmeta-org-stack.ts "Source of CDK Stack 'AltmetaOrgStack'"
 [Altmeta Org Stack Diagram]: doc/altmeta-org-stack-mermaid.png "Component architecture of Altmeta Org Stack"
 [Altmeta Org Stack Diagram Source]: doc/altmeta-org-stack.md "Diagram source for Component architecture of Altmeta Org Stack"
@@ -102,6 +103,7 @@ CloudFormation stack and prints environment variables for the frontend website.
 [Initial User Trigger Diagram]: doc/initial-user-trigger-mermaid.png "Component architecture of Initial User Trigger Component"
 [Initial User Trigger Diagram Source]: doc/initial-user-trigger.md "Diagram source for Component architecture of Initial User Trigger Component"
 [mermaid.live]: https://mermaid.live/ "Mermaid Live editor"
+[NodejsFunction]: https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_lambda_nodejs.NodejsFunction.html
 [conventional commits]: https://www.conventionalcommits.org/ "Conventional Commits Spec"
 [`cdk.json`]: cdk.json
 [`altmeta-org-print-env.ts`]: bin/altmeta-org-print-env.ts
