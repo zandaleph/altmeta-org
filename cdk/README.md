@@ -36,14 +36,23 @@ AltmetaProd.
 
 # Architecture
 
-The [top level stack] is currently focused on setting up a Cognito User Pool and
-Identity Pool.  This allows us to implement a secure, restricted login where
+The [top level stack] is currently focused on setting up a Cognito User Pool
+and Identity Pool. This allows us to implement a secure, restricted login where
 authenticated users have federated access to some AWS resources.  Right now,
 that access is limited to a private, per-user folder in the UserData bucket.
 
 ![Altmeta Org Stack Diagram]
 
 (Diagram source: [Altmeta Org Stack Diagram Source], rendered on [mermaid.live])
+
+We've also set up a second class of users - admins, which have additional
+access to create and delete users.  This is achieved by adding a custom
+property `is_admin` to our user pool, then using role mapping rules on the
+identity pool to assign the admin role if the property is set to "true".
+
+![Altmeta Identity Pool Diagram]
+
+(Diagram source: [Altmeta Identity Pool Diagram Source], rendered on [mermaid.live])
 
 ## Initial User Trigger
 
@@ -83,10 +92,13 @@ CloudFormation stack and prints environment variables for the frontend website.
 [the website itself]: ../nextjs-app/README.md "Altmeta.org frontend package"
 [Vercel]: https://vercel.com "Vercel"
 [AWS CLI is setup]: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html "AWS Command Line Interface Quick Setup"
+[initial user trigger]: lib/initial-user-trigger.ts "Deploy-time trigger to setup initial user"
 [initial-user-handler.ts]: lib/initial-user-handler.ts "Handler to setup initial user"
 [top level stack]: lib/altmeta-org-stack.ts "Source of CDK Stack 'AltmetaOrgStack'"
 [Altmeta Org Stack Diagram]: doc/altmeta-org-stack-mermaid.png "Component architecture of Altmeta Org Stack"
 [Altmeta Org Stack Diagram Source]: doc/altmeta-org-stack.md "Diagram source for Component architecture of Altmeta Org Stack"
+[Altmeta Identity Pool Diagram]: doc/altmeta-identity-pool-mermaid.png "Detail of identity pool and role mapping"
+[Altmeta Identity Pool Diagram Source]: doc/altmeta-identity-pool.md "Diagram source for detail of identity pool and role mapping"
 [Initial User Trigger Diagram]: doc/initial-user-trigger-mermaid.png "Component architecture of Initial User Trigger Component"
 [Initial User Trigger Diagram Source]: doc/initial-user-trigger.md "Diagram source for Component architecture of Initial User Trigger Component"
 [mermaid.live]: https://mermaid.live/ "Mermaid Live editor"

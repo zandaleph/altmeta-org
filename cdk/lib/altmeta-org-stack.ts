@@ -7,12 +7,7 @@ import {
   Stack,
 } from "aws-cdk-lib";
 import { InitialUserTrigger } from "./initial-user-trigger";
-import {
-  ManagedPolicy,
-  PolicyStatement,
-  Role,
-  WebIdentityPrincipal,
-} from "aws-cdk-lib/aws-iam";
+import { AltmetaIdentityPool } from "./auth/altmeta-identity-pool";
 
 export interface AltmetaOrgStackProps extends StackProps {
   domainPrefix?: string;
@@ -63,121 +58,11 @@ export class AltmetaOrgStack extends Stack {
     });
     userPool.addDomain("Domain", { cognitoDomain: { domainPrefix } });
 
-    const userDataListStatement = new PolicyStatement({
-      actions: ["s3:ListBucket"],
-      resources: [bucket.bucketArn],
-      conditions: {
-        StringLike: {
-          "s3:prefix": [
-            "cognito/user-data/${cognito-identity.amazonaws.com:sub}",
-          ],
-        },
-      },
+    new AltmetaIdentityPool(this, "AltmetaIdentityPool", {
+      bucketArn: bucket.bucketArn,
+      userPool,
+      userPoolClient,
     });
-
-    const userDataAccessStatement = new PolicyStatement({
-      actions: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
-      resources: [
-        `${bucket.bucketArn}/cognito/user-data/\${cognito-identity.amazonaws.com:sub}`,
-        `${bucket.bucketArn}/cognito/user-data/\${cognito-identity.amazonaws.com:sub}/*`,
-      ],
-    });
-
-    const cognitoListUserStatement = new PolicyStatement({
-      actions: ["cognito-idp:ListUsers"],
-      resources: [userPool.userPoolArn],
-    });
-
-    const cognitoAdminAddRemoveUserStatement = new PolicyStatement({
-      actions: [
-        "cognito-idp:AdminGetUser",
-        "cognito-idp:AdminCreateUser",
-        "cognito-idp:AdminDeleteUser",
-      ],
-      resources: [userPool.userPoolArn],
-    });
-
-    const authenticatedUserPolicy = new ManagedPolicy(
-      this,
-      "AuthenticatedUserPolicy"
-    );
-    authenticatedUserPolicy.addStatements(
-      userDataListStatement,
-      userDataAccessStatement
-    );
-
-    const adminUserPolicy = new ManagedPolicy(this, "AdminUserPolicy");
-    adminUserPolicy.addStatements(
-      cognitoListUserStatement,
-      cognitoAdminAddRemoveUserStatement
-    );
-
-    const identityPool = new cognito.CfnIdentityPool(this, "IdentityPool", {
-      allowUnauthenticatedIdentities: false,
-      cognitoIdentityProviders: [
-        {
-          clientId: userPoolClient.userPoolClientId,
-          providerName: userPool.userPoolProviderName,
-        },
-      ],
-    });
-
-    const authenticatedUserRole = new Role(this, "AuthenticatedUserRole", {
-      assumedBy: new WebIdentityPrincipal("cognito-identity.amazonaws.com", {
-        StringEquals: {
-          "cognito-identity.amazonaws.com:aud": identityPool.ref,
-        },
-        "ForAnyValue:StringLike": {
-          "cognito-identity.amazonaws.com:amr": "authenticated",
-        },
-      }),
-    });
-    authenticatedUserRole.addManagedPolicy(authenticatedUserPolicy);
-
-    const adminRole = new Role(this, "AdminRole", {
-      assumedBy: new WebIdentityPrincipal("cognito-identity.amazonaws.com", {
-        StringEquals: {
-          "cognito-identity.amazonaws.com:aud": identityPool.ref,
-        },
-        "ForAnyValue:StringLike": {
-          "cognito-identity.amazonaws.com:amr": "authenticated",
-        },
-      }),
-    });
-    adminRole.addManagedPolicy(authenticatedUserPolicy);
-    adminRole.addManagedPolicy(adminUserPolicy);
-
-    new cognito.CfnIdentityPoolRoleAttachment(
-      this,
-      "identity-pool-role-attachment",
-      {
-        identityPoolId: identityPool.ref,
-        roles: {
-          authenticated: authenticatedUserRole.roleArn,
-        },
-        roleMappings: {
-          mapping: {
-            type: "Rules",
-            ambiguousRoleResolution: "AuthenticatedRole",
-            identityProvider: `cognito-idp.${
-              Stack.of(this).region
-            }.amazonaws.com/${userPool.userPoolId}:${
-              userPoolClient.userPoolClientId
-            }`,
-            rulesConfiguration: {
-              rules: [
-                {
-                  claim: "custom:is_admin",
-                  matchType: "Equals",
-                  value: "true",
-                  roleArn: adminRole.roleArn,
-                },
-              ],
-            },
-          },
-        },
-      }
-    );
 
     new InitialUserTrigger(this, "UserTrigger", {
       stackName: domainPrefix,
