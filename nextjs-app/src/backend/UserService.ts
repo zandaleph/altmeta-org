@@ -6,6 +6,7 @@ import {
   AttributeType,
   CognitoIdentityProviderClient,
   ListUsersCommand,
+  UserNotFoundException,
   UserType,
 } from "@aws-sdk/client-cognito-identity-provider";
 
@@ -64,6 +65,23 @@ export default class UserService {
     };
   }
 
+  async getUser(userId: string): Promise<User | null> {
+    try {
+      const result = await this.client.send(
+        new AdminGetUserCommand({
+          UserPoolId: this.userPoolId,
+          Username: userId,
+        })
+      );
+      return this.convertAttributes(result.UserAttributes);
+    } catch (e) {
+      if (e instanceof UserNotFoundException) {
+        return null;
+      }
+      throw e;
+    }
+  }
+
   async createUser(email: string): Promise<User> {
     const result = await this.client.send(
       new AdminCreateUserCommand({
@@ -83,13 +101,10 @@ export default class UserService {
   }
 
   async deleteUser(id: string): Promise<void> {
-    const result = await this.client.send(
-      new AdminGetUserCommand({
-        UserPoolId: this.userPoolId,
-        Username: id,
-      })
-    );
-    const user = this.convertAttributes(result.UserAttributes);
+    const user = await this.getUser(id);
+    if (!user) {
+      throw new Error("User does not exist");
+    }
     if (user.isAdmin) {
       throw new Error("Can't delete admin users");
     }
