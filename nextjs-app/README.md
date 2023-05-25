@@ -94,6 +94,8 @@ is dedicated to a single application.  See [our custom logout API] for details.
   * Support legacy paths
   * Build / use a simple CMS? ([Webiny] or [Contentful]?)
 * Todo list ;-)
+* CardDAV and CalDAV compliant server?
+* Solid support?!
 
 <!-- Link References -->
 [Next.js]: https://nextjs.org "Next.js website"
