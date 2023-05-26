@@ -14,7 +14,7 @@ AWS is used for a number of features.
 
 * Run this to point the local dev website at the Beta backend.
 
-  `npm run print-env -s | ../nextjs-app/.env.development.local`
+  `npm run print-env -s > ../nextjs-app/.env.development.local`
 * The default admin password from [initial-user-handler.ts] will need to be
   changed after first login.
 * See the [Website README] for local dev website instructions.
