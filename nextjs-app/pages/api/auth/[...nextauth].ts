@@ -1,4 +1,4 @@
-import NextAuth, { Session, User } from "next-auth";
+import NextAuth, { AuthOptions, Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CognitoProvider from "next-auth/providers/cognito";
 import { Issuer } from "openid-client";
@@ -69,7 +69,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
   }
 }
 
-export default NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CognitoProvider({
       clientId: process.env.COGNITO_CLIENT_ID ?? "",
@@ -113,4 +113,6 @@ export default NextAuth({
       };
     },
   },
-});
+};
+
+export default NextAuth(authOptions);

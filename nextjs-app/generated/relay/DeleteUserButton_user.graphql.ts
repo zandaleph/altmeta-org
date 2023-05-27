@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1aa40e2f57677dd7cb72c194197cdb7a>>
+ * @generated SignedSource<<a0d66b55c5f8c1d0d564443b05cee0c3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,8 @@
 import { Fragment, ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type DeleteUserButton_user$data = {
-  readonly id: string | null;
   readonly email?: string | null;
+  readonly id: string | null;
   readonly " $fragmentType": "DeleteUserButton_user";
 };
 export type DeleteUserButton_user$key = {

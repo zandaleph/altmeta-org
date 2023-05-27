@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4f8031298edd12d78db12b698755b39c>>
+ * @generated SignedSource<<c1b98aecca58c36cfc5787cc7c84bfea>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,8 @@
 import { ConcreteRequest, Mutation } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AddUserButtonMutation$variables = {
-  email: string;
   connectionId: string;
+  email: string;
 };
 export type AddUserButtonMutation$data = {
   readonly createUser: {
@@ -23,8 +23,8 @@ export type AddUserButtonMutation$data = {
   } | null;
 };
 export type AddUserButtonMutation = {
-  variables: AddUserButtonMutation$variables;
   response: AddUserButtonMutation$data;
+  variables: AddUserButtonMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b7f4f9c11045568d5e4d98ab371dcc85>>
+ * @generated SignedSource<<85f780c7ad8a4618147e6303c7a81431>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,8 +18,8 @@ export type gatewayQuery$data = {
   readonly " $fragmentSpreads": FragmentRefs<"UserList_query">;
 };
 export type gatewayQuery = {
-  variables: gatewayQuery$variables;
   response: gatewayQuery$data;
+  variables: gatewayQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){

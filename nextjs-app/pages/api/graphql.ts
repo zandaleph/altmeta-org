@@ -1,47 +1,38 @@
 import schema from "../../schema";
-import { ApolloServer } from "apollo-server-micro";
 import {
-  ApolloServerPluginLandingPageGraphQLPlayground,
+  ApolloServerPluginLandingPageLocalDefault,
   ApolloServerPluginLandingPageProductionDefault,
-  AuthenticationError,
-} from "apollo-server-core";
-import { NextApiHandler } from "next";
-import { getSession } from "next-auth/react";
+} from "@apollo/server/plugin/landingPage/default";
+import { getServerSession } from "next-auth/next";
+import { GraphQLError } from "graphql";
+import { ApolloServer } from "@apollo/server";
+import { startServerAndCreateNextHandler } from "@as-integrations/next";
+import { authOptions } from "./auth/[...nextauth]";
 
 const landingPagePlugin =
   process.env.NODE_ENV == "development"
-    ? ApolloServerPluginLandingPageGraphQLPlayground({
-        settings: {
-          "request.credentials": "same-origin",
-          "schema.polling.interval": 15000,
-        },
-      })
+    ? ApolloServerPluginLandingPageLocalDefault()
     : ApolloServerPluginLandingPageProductionDefault();
 
 const server = new ApolloServer({
   schema,
   plugins: [landingPagePlugin],
-  async context({ req }) {
-    const session = await getSession({ req });
+});
 
-    if (!session) throw new AuthenticationError("you must be logged in");
-
-    return { session };
+export default startServerAndCreateNextHandler(server, {
+  async context(req, res) {
+    const session = await getServerSession(req, res, authOptions);
+    if (!session) {
+      throw new GraphQLError("you must be logged in, fool", {
+        extensions: { code: "UNAUTHENTICATED" },
+      });
+    }
+    return { req, res, session };
   },
 });
-const serverPromise = server.start();
 
-const graphqlHandler: NextApiHandler<unknown> = async (req, res) => {
-  await serverPromise;
-  await server.createHandler({
-    path: "/api/graphql",
-  })(req, res);
-};
-
-export default graphqlHandler;
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };

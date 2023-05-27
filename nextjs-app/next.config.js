@@ -8,7 +8,4 @@ module.exports = {
       artifactDirectory: "./generated/relay", // needs to match "relay" in package.json
     },
   },
-  experimental: {
-    concurrentFeatures: true,
-  },
 };
