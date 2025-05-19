@@ -1,0 +1,331 @@
+---
+title: 'Breakdown of Yet Another Todo App'
+date: '2020-01-18'
+lead: 'In which we explain some code which exists to explain other code'
+---
+
+import TodoApp from '../../2019/12/TodoApp';
+
+To demo MDX, I wrote my own little Todo App, which you can see here:
+
+<TodoApp />
+
+[Last time] I wrote a bit about the process of developing this demo, so this
+time it makes sense to explain the demo from the code. We'll start at the top
+(of the app, which isn't at the top of the file because I'm an old C dev at
+heart).
+
+[last time]: ../how-a-simple-todo-app-is-not-simple/
+
+```javascript
+export default function TodoApp({ initialTodos }) {
+  const [todos, dispatch] = useReducer(todoReducer, initialTodos, initTodos);
+  const todoItems = todos.map((todo, idx) => {
+    return (
+      <TodoItem
+        todo={todo}
+        key={idx.toString()}
+        dispatch={action => dispatch({ ...action, index: idx })}
+      />
+    );
+  });
+  return (
+    <div css={todoAppCss}>
+      <h1>MY TODO LIST</h1>
+      <ul>{todoItems}</ul>
+    </div>
+  );
+}
+```
+
+This is the TodoApp component, written in functional style with a single hook,
+[`useReducer`]. I use [object unpacking in the function definition] to pull out
+the only prop, `initialTodos` - an optional list of strings. We then use the
+`useReducer` hook to manage our state (`todos`) and create our `dispatch`
+function (more on this in a second). We do a pretty standard `map` of our state
+to a list of components (`TodoItem`, in this case), then render a very basic
+layout of a heading and a list inside a styled container `<div>`.
+
+[`usereducer`]: https://reactjs.org/docs/hooks-reference.html#usereducer
+[object unpacking in the function definition]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Unpacking_fields_from_objects_passed_as_function_parameter
+
+The one tricky bit about this code is the lambda:
+
+```javascript
+action => dispatch({ ...action, index: idx });
+```
+
+This creates a new, todo-item specific `dispatch` function which adds
+information to the `action` argument which the `TodoItem` doesn't know about,
+namely, its own `index`. There are pros and cons to this approach - on the plus
+side, it simplifies the `TodoItem` code by not sending in information purely to
+have it sent out again. On the minus side, it is likely not as performant as
+refusing to create a new function object here, so the code is (possibly) slower
+and more memory inefficient (though it is difficult to know without measuring).
+For the demo, I opted for the version with simpler code.
+
+Next up is the reducer function, `todoReducer`, which we used in the first line
+of `TodoApp`. This is a standard reducer function, so it takes the current state
+(`todos`) and some `action` - an object with, by convention, a `type` property,
+and additional properties needed to enact the type of action specified. The
+reducer then returns the new state without modifying the existing state. These
+were popularized in React by the Redux state management library, and offer a few
+advantages over other ways of managing state, the most important of which is a
+centralized place that defines valid state transformations, rather than
+federating state transformation logic all over your codebase.
+
+I'll explain each action type in turn:
+
+```javascript
+function todoReducer(todos, action) {
+  const idx = action.index;
+  switch (action.type) {
+    case 'SET_TODO': {
+      const newTodos = [...todos];
+      newTodos[idx] = action.todo;
+      return newTodos;
+    }
+```
+
+The `SET_TODO` action is self explanatory: it replaces the todo at the index
+specified with the new todo. A more defensive version might copy the incoming
+todo to isolate state, or freeze the resulting object, but I'm omitting that for
+brevity. It has two required parameters beyond `type`: `index` and `todo`.
+
+```javascript
+    case 'SPLIT_TODO': {
+      const newTodos = [...todos];
+      const prevTodo = newTodos[idx];
+      newTodos.splice(
+        idx,
+        1,
+        { ...prevTodo, text: prevTodo.text.substring(0, action.start) },
+        { text: prevTodo.text.substring(action.end), isDone: false, focus: 0 }
+      );
+      return newTodos;
+    }
+```
+
+The `SPLIT_TODO` action is for when the Enter key is pressed, it has three
+required parameters: `index`, `start`, and `end` (the last two being the
+currently selected text, they are equal if it is just a cursor). It turns a
+single todo item into two, where the first new todo has the text from the
+beginning of the existing to `start`, and the second new todo has the text from
+`end` to the end of the existing. It also sets a `focus` parameter on the second
+new todo which indicates that the window's focus (which input has the cursor)
+should be at the beginning of the second new todo item. It is important to note
+that this `focus` parameter does nothing by itself, we have to implement that
+logic later.
+
+At this point we've seen all the possible parameters of a todo, so I should
+clarify what the type of the `todos` state is. It is a list of objects, each
+object has three parameters:
+
+- a required string `text`, which indicates the text of the todo.
+- an optional boolean `isDone`, which if present and true indicates the todo is
+  done.
+- an optional integer `focus`, which if present indicates this todo wants focus
+  at the stored index.
+
+Moving onto the next action type, we actually do two with one helper function.
+The switch cases are:
+
+```javascript
+    case 'MERGE_PREV_TODO': {
+      return mergeTodos(todos, idx - 1);
+    }
+    case 'MERGE_NEXT_TODO': {
+      return mergeTodos(todos, idx);
+    }
+```
+
+And the helper function is:
+
+```javascript
+function mergeTodos(todos, idx) {
+  if (idx < 0 || idx >= todos.length - 1) {
+    return todos;
+  }
+  const newTodos = [...todos];
+  const firstTodo = newTodos[idx];
+  const secondTodo = newTodos[idx + 1];
+  newTodos.splice(idx, 2, {
+    ...firstTodo,
+    text: firstTodo.text + secondTodo.text,
+    focus: firstTodo.text.length,
+  });
+  return newTodos;
+}
+```
+
+These actions, `MERGE_PREV_TODO` and `MERGE_NEXT_TODO`, are for when backspace
+is pressed at the beginning of a todo, or delete is pressed at the end of a
+todo, respectively. They are the inverse of `SPLIT_TODO`, and turn two separate
+todos into a single todo. After some simple bounds checking, we create the text
+from the concatenation of the two items, and ask the app to focus at the join
+point - this makes sense in both cases as your cursor must be at the beginning
+or end of a todo item in order to request these actions (I'll point this out
+later).
+
+The one potential oddity of the above code is the expansion of `...firstTodo` at
+the beginning of the new todo. In practice, this sets `isDone` to whatever
+`firstTodo` had, and that's it. In theory, this future proofs the code in case
+we add additional fields to the definition of a todo. However, this code may
+still need to change when we do this, based on how we want to merge new fields
+as we define them. With a stronger type system, I might have just written code
+specifically for `isDone` and let errors crop up if I ever added fields.
+
+```javascript
+    default: {
+      return todos;
+    }
+  }
+}
+```
+
+This default case isn't strictly necessary for our demo, but it is a standard
+bit of hygiene for reducers. If we receive an `action` with an unexpected
+`type`, we simply keep the existing state. And that wraps up our set of possible
+actions: setting, splitting, and merging.
+
+Next up is our `TodoItem` component. This is a bit more complicated, but we'll
+take it a bit at a time.
+
+```javascript
+export default function TodoItem({ todo, dispatch }) {
+  const textInput = useRef();
+  useEffect(() => {
+    if (todo.focus != null && textInput.current != null) {
+      textInput.current.focus();
+      textInput.current.setSelectionRange(todo.focus, todo.focus);
+      dispatch({
+        type: 'SET_TODO',
+        todo: { ...todo, focus: undefined },
+      });
+    }
+  }, [todo, dispatch]);
+```
+
+The top of this functional component uses two hooks, `useRef` and `useEffect`.
+We're using `useRef` for the straightforward purpose - to hold a React `ref` to
+our text input element, which we'll use in the following effect. The `useEffect`
+hook sets up a function that gets run after each render, and is useful for code
+which wants to interact with the DOM. In our case, we need to interpret the
+signal that a todo needs focus and actually set the focus correctly. We do this
+by using the `textInput` ref, and calling `focus()` and `setSelection()` to put
+the cursor where we want. We then call `dispatch` with the `SET_TODO` action
+type, and remove the `focus` parameter to indicate we have finished setting the
+focus.
+
+Continuing on, we have:
+
+```javascript
+  return (
+    <li>
+      <label css={checkboxCss}>
+        <input
+          type="checkbox"
+          checked={todo.isDone ?? false}
+          onChange={e =>
+            dispatch({
+              type: 'SET_TODO',
+              todo: { ...todo, isDone: e.target.checked },
+            })
+          }
+        />
+      </label>
+```
+
+The checkbox has a pretty standard setup: it's state is synced to the `todo`
+prop's `isDone` property, and when the checkbox is changed we update the
+`todo`'s `isDone` property to the new state. Note the use the of the `??`
+operator to provide a default of `false` (unchecked) if the `isDone` property is
+undefined.
+
+```javascript
+      <input
+        type="text"
+        ref={textInput}
+        value={todo.text}
+        onKeyDown={todoItemOnKeyDown(dispatch)}
+        onChange={e =>
+          dispatch({
+            type: 'SET_TODO',
+            todo: { ...todo, text: e.target.value },
+          })
+        }
+        css={[
+          textInputCss,
+          todo.isDone === true && { textDecoration: 'line-through' },
+        ]}
+      />
+    </li>
+  );
+}
+```
+
+The text input has a similar setup - `value` and `onChange` keep state in sync.
+Beyond those we have a conditional styling applied if `todo.isDone` (falsey
+values are ignored when styling) and a custom `onKeyDown` handler, which is
+here:
+
+```javascript
+function todoItemOnKeyDown(dispatch) {
+  return e => {
+    if (e.key === 'Enter') {
+      dispatch({
+        type: 'SPLIT_TODO',
+        start: e.target.selectionStart,
+        end: e.target.selectionEnd,
+      });
+    } else if (
+      e.key === 'Backspace' &&
+      e.target.selectionStart === 0 &&
+      e.target.selectionEnd === 0
+    ) {
+      e.preventDefault();
+      dispatch({
+        type: 'MERGE_PREV_TODO',
+      });
+    } else if (
+      e.key === 'Delete' &&
+      e.target.selectionStart === e.target.value.length &&
+      e.target.selectionEnd === e.target.value.length
+    ) {
+      e.preventDefault();
+      dispatch({
+        type: 'MERGE_NEXT_TODO',
+      });
+    }
+  };
+}
+```
+
+This is where our three other action types are used. The enter key splits (and
+passes along the current selection to be deleted), while the backspace and
+delete keys merge if they are at the correct cursor location (otherwise they do
+their normal thing).
+
+The most complicated piece of machinery is handling focus, so let's walk through
+a sequence of events for that:
+
+- `onKeyDown` handler gets a relevant key press, calls `dispatch`
+- `dispatch` creates a new todo with `focus` set
+- A state change causes a `render` to occur
+- Rendering `TodoItem` with `focus` set means its `useEffect` callback is
+  nontrivial
+- After `render`, callback sets focus and cursor position and calls `dispatch`
+- Second `dispatch` call unsets `focus`
+- State change causes a `render`, but no parts of the generated tree change so
+  it is a cheap noop.
+
+And that, as they say, is that. I've left off the CSS as I don't think it is
+that interesting, and I've omitted the `initTodos` function because it is
+trivial, but the source is all available on GitHub so feel free to look there
+for the full effect.
+
+There's plenty we could do if we were going to make this a fully-fledged
+application. Likely the first would be to persist the todos somewhere, which
+luckily separating state from presentation like we have with our reducer makes
+fairly easy. Over the next month or so, I'm hoping to build a more complicated
+app to demonstrate some of these complications.

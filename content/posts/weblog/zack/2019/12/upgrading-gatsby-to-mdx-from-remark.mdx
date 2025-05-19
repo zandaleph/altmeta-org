@@ -1,0 +1,114 @@
+---
+title: 'Upgrading Gatsby to MDX from Remark'
+date: '2019-12-17'
+lead: "In which we add technology for technology's sake."
+---
+
+import TodoApp from './TodoApp';
+
+As is my usual habit, once I've upgraded something I cannot resist continuously
+tweaking with it until I get bored. In doing so, I frequently fail to actually
+use the technology I setup, which leads me to wonder why I did it in the first
+place. But no matter that now, we've added more technlogy!
+
+Behold, a trivial Todo app _inside_ a blog post!
+
+<TodoApp
+  initialTodos={[
+    'Create Todos',
+    'Enter key to create items',
+    'Backspace deletes empty items',
+  ]}
+/>
+
+How amazing is this? Right? I guess? Maybe I should explain what's happening
+here.
+
+[Last time] I mentioned that I was writing my blog posts in [Markdown] instead
+of raw html. This is a huge quality of life improvement - pressing enter is a
+lot simpler than ensuring my `<p>` tags are matched. But like all abstractions,
+the simplicity comes at the cost of expressiveness.
+
+[last time]: /weblog/zack/2019/11/blog-of-my-dreams/
+[markdown]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+
+As I read more about Gastby, it became clear that a Markdown extension called
+[MDX] was the hot hotness these days, and I wanted to give it a try. What MDX
+allows you to do is to interleave React components with standard Markdown, so
+that you can have custom-made things appear instead of just text, headings, and
+images (I'm underselling Markdown a bit).
+
+[mdx]: https://mdxjs.com/
+
+I read quite a few articles while trying to figure out how to convert my
+remark-based gatsby blog to an mdx-based blog, but as with most programming it
+was a fair bit of combining sources and guesswork which allowed me to get this
+setup just right. My primary sources were:
+
+- [This post], which almost hits every point I need but uses screenshots of
+  diffs instead of actual code, and isn't consistent about which side is which,
+  so that sucked a bit.
+- [The Gatsby docs on MDX], which unhelpfully use a starter instead of showing a
+  migration, but [does have an excellent section on interop with remark].
+- [This dream of a post], which doesn't tell me anything about how to migrate
+  but gave me lots of other shiny things to think about like storybook.
+- [This extensive post], which now that I'm done is really complete but honestly
+  was too colorful and the font size too large for me to read it.
+
+[this post]: https://blog.scottspence.me/convert-gatsby-default-blog-to-use-mdx
+[the gatsby docs on mdx]: https://www.gatsbyjs.org/docs/mdx/getting-started/
+[does have an excellent section on interop with remark]: https://www.gatsbyjs.org/docs/mdx/plugins/
+[this dream of a post]: https://dev.to/whoisryosuke/redesigning-my-blog-using-gatsby-and-mdx-254c
+[this extensive post]: https://alligator.io/gatsbyjs/mdx-in-gatsby/
+
+Now, you can just skip to the good part and [look at my diff], but the slightly
+longer version is:
+
+[look at my diff]: https://github.com/zandaleph/bookish-carnival/commit/9a29fce5c97cff88c60c802851548b99fe9664fc
+
+- Add your dependencies with `npm` or `yarn`:
+  `gatsby-plugin-mdx @mdx-js/mdx @mdx-js/react`
+
+- Update `gatsby-config.js`
+
+  - Swap `gatsby-transformer-remark` for `gatsby-plugin-mdx`
+  - If you had remark plugins, change `plugins` to `gatsbyRemarkPlugins`
+  - You'll need to also add those remark plugins at the top level list of
+    plugins _because they're not automatically resolved anymore_.
+
+- Update `gatsby-node.js`'s `onCreateNode()` handler
+  - When checking `node.internal.type`, Swap `MarkdownRemark` for `Mdx`
+- Update your static GraphQL queries
+  - Swap `allMarkdownRemark` for `allMdx`
+  - Swap `markdownRemark` for `mdx`
+    - Within that, swap `html` for `body`
+- Update your templates
+  - Instead of: `<div dangerouslySetInnerHTML={{ __html: post.html }} />`
+  - Use: `<MDXRenderer>{post.body}</MDXRenderer>`
+  - Don't forget: `import { MDXRenderer } from 'gatsby-plugin-mdx';`
+
+Once you've done these few mechanical changes, you can try out MDX in your very
+own markdown files! For example, to get the TodoApp earlier in the article, the
+beginning of this post looks like:
+
+```mdx
+import TodoApp from './TodoApp';
+
+Behold, a trivial Todo app _inside_ a blog post!
+
+<TodoApp initialTodos={['Create Todos']} />
+```
+
+The only other thing I did to support my new capabilities was to install [syntax
+highlighting for my editor (VSCode)], since MDX is still new enough that it
+isn't supported right out of the box.
+
+[syntax highlighting for my editor (vscode)]: https://marketplace.visualstudio.com/items?itemName=silvenon.mdx
+
+Now, it turns out installing MDX was trivial compared to actually building the
+Todo App I created to show off the new features. I spent an evening setting up
+MDX, but getting the Todo App into a publishable state took another three or
+four evenings. So my next post will be about building that sucker - where the
+code was inspired by, why I didn't just use it as-is, and how bad I really am at
+CSS. But for now, I hope this post helps someone shortcut their gatsby upgrade
+to MDX, and they don't get nearly as distracted as I did actually using it.
