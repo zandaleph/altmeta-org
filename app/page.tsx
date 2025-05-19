@@ -1,9 +1,55 @@
 import Image from "next/image";
+import Link from "next/link";
+import fs from "fs";
+import path from "path";
+import matter from "gray-matter";
 
-export default function Home() {
+// Function to get all blog posts
+async function getBlogPosts() {
+  const postsDirectory = path.join(process.cwd(), "content/posts/weblog/zack");
+  const years = fs.readdirSync(postsDirectory);
+
+  const posts = [];
+
+  for (const year of years) {
+    const yearPath = path.join(postsDirectory, year);
+    if (fs.statSync(yearPath).isDirectory()) {
+      const months = fs.readdirSync(yearPath);
+
+      for (const month of months) {
+        const monthPath = path.join(yearPath, month);
+        if (fs.statSync(monthPath).isDirectory()) {
+          const files = fs.readdirSync(monthPath);
+
+          for (const file of files) {
+            if (file.endsWith(".md")) {
+              const filePath = path.join(monthPath, file);
+              const fileContents = fs.readFileSync(filePath, "utf8");
+              const { data: frontmatter } = matter(fileContents);
+
+              posts.push({
+                title: frontmatter.title || file.replace(".md", ""),
+                date: frontmatter.date || `${year}-${month}`,
+                slug: `${year}/${month}/${file.replace(".md", "")}`,
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return posts.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+}
+
+export default async function Home() {
+  const posts = await getBlogPosts();
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-4xl">
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -12,18 +58,34 @@ export default function Home() {
           height={38}
           priority
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+
+        <section className="w-full">
+          <h2 className="text-2xl font-bold mb-6">Blog Posts</h2>
+          <div className="space-y-4">
+            {posts.map((post) => (
+              <article
+                key={post.slug}
+                className="border-b border-gray-200 dark:border-gray-800 pb-4"
+              >
+                <h3 className="text-xl font-semibold mb-2">
+                  <Link
+                    href={`/weblog/zack/${post.slug}`}
+                    className="hover:underline"
+                  >
+                    {post.title}
+                  </Link>
+                </h3>
+                <time className="text-sm text-gray-600 dark:text-gray-400">
+                  {new Date(post.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </time>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a
