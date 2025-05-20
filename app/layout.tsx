@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Lora, Source_Code_Pro, Varela_Round } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const varelaRound = Varela_Round({
   variable: "--font-varela-round",
@@ -39,9 +41,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${varelaRound.variable} ${lora.variable} ${sourceCodePro.variable} antialiased`}
+        className={`${varelaRound.variable} ${lora.variable} ${sourceCodePro.variable} antialiased min-h-screen flex flex-col`}
       >
-        {children}
+        <Header />
+        <main className="flex-grow w-full max-w-4xl mx-auto px-6">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

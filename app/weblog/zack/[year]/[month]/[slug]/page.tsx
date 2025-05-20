@@ -29,7 +29,7 @@ export default async function BlogPost({ params }: PageProps) {
   const post = getBlogPostContent(settledParams);
 
   return (
-    <article className="max-w-4xl mx-auto px-4 py-8">
+    <article className="py-8">
       <header className="mb-8">
         <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
         {post.date && (
