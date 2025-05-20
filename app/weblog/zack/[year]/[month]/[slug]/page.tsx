@@ -4,6 +4,13 @@ import matter from "gray-matter";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Picture from "next-export-optimize-images/picture";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { CSSProperties } from "react";
+
+interface HighligherStyle {
+  [key: string]: CSSProperties;
+}
 
 export async function generateStaticParams() {
   const postsDirectory = path.join(process.cwd(), "public/weblog/zack");
@@ -101,6 +108,23 @@ export default async function BlogPost({ params }: PageProps) {
                   width={1200}
                   height={200}
                 />
+              );
+            },
+            code: (props) => {
+              const { className, children } = props;
+              const match = /language-(\w+)/.exec(className || "");
+              return match ? (
+                <SyntaxHighlighter
+                  style={vscDarkPlus as HighligherStyle}
+                  language={match[1]}
+                  PreTag="div"
+                >
+                  {String(children).replace(/\n$/, "")}
+                </SyntaxHighlighter>
+              ) : (
+                <code className={className} {...props}>
+                  {children}
+                </code>
               );
             },
           }}
