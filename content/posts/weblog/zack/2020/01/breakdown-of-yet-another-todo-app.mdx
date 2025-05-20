@@ -1,14 +1,17 @@
 ---
-title: 'Breakdown of Yet Another Todo App'
-date: '2020-01-18'
-lead: 'In which we explain some code which exists to explain other code'
+title: "Breakdown of Yet Another Todo App"
+date: "2020-01-18"
+lead: "In which we explain some code which exists to explain other code"
 ---
 
-import TodoApp from '../../2019/12/TodoApp';
+import TodoApp from "../../2019/12/TodoApp";
 
 To demo MDX, I wrote my own little Todo App, which you can see here:
 
+```
+Ed: temporarily disabled while we upgrate the website's underpinnings.
 <TodoApp />
+```
 
 [Last time] I wrote a bit about the process of developing this demo, so this
 time it makes sense to explain the demo from the code. We'll start at the top
@@ -25,7 +28,7 @@ export default function TodoApp({ initialTodos }) {
       <TodoItem
         todo={todo}
         key={idx.toString()}
-        dispatch={action => dispatch({ ...action, index: idx })}
+        dispatch={(action) => dispatch({ ...action, index: idx })}
       />
     );
   });
@@ -52,7 +55,7 @@ layout of a heading and a list inside a styled container `<div>`.
 The one tricky bit about this code is the lambda:
 
 ```javascript
-action => dispatch({ ...action, index: idx });
+(action) => dispatch({ ...action, index: idx });
 ```
 
 This creates a new, todo-item specific `dispatch` function which adds
@@ -271,30 +274,30 @@ here:
 
 ```javascript
 function todoItemOnKeyDown(dispatch) {
-  return e => {
-    if (e.key === 'Enter') {
+  return (e) => {
+    if (e.key === "Enter") {
       dispatch({
-        type: 'SPLIT_TODO',
+        type: "SPLIT_TODO",
         start: e.target.selectionStart,
         end: e.target.selectionEnd,
       });
     } else if (
-      e.key === 'Backspace' &&
+      e.key === "Backspace" &&
       e.target.selectionStart === 0 &&
       e.target.selectionEnd === 0
     ) {
       e.preventDefault();
       dispatch({
-        type: 'MERGE_PREV_TODO',
+        type: "MERGE_PREV_TODO",
       });
     } else if (
-      e.key === 'Delete' &&
+      e.key === "Delete" &&
       e.target.selectionStart === e.target.value.length &&
       e.target.selectionEnd === e.target.value.length
     ) {
       e.preventDefault();
       dispatch({
-        type: 'MERGE_NEXT_TODO',
+        type: "MERGE_NEXT_TODO",
       });
     }
   };
