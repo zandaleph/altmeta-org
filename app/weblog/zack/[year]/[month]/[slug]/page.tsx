@@ -1,10 +1,10 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import Picture from "next-export-optimize-images/picture";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { CSSProperties } from "react";
 import { getAllBlogPosts, getBlogPostContent } from "@/lib/blog";
+import BlogPicture from "./BlogPicture";
 
 interface HighligherStyle {
   [key: string]: CSSProperties;
@@ -53,20 +53,9 @@ export default async function BlogPost({ params }: PageProps) {
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            img: (props) => {
-              let absSrc = props.src as string;
-              if (absSrc.startsWith("./")) {
-                absSrc = `/weblog/zack/${year}/${month}/${absSrc.slice(2)}`;
-              }
-              return (
-                <Picture
-                  src={absSrc}
-                  alt={props.alt as string}
-                  width={1200}
-                  height={200}
-                />
-              );
-            },
+            img: (props) => (
+              <BlogPicture year={year} month={month} {...props} />
+            ),
             code: (props) => {
               const { className, children } = props;
               const match = /language-(\w+)/.exec(className || "");
