@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next-export-optimize-images/image";
 import Link from "next/link";
 import fs from "fs";
 import path from "path";
@@ -6,7 +6,7 @@ import matter from "gray-matter";
 
 // Function to get all blog posts
 async function getBlogPosts() {
-  const postsDirectory = path.join(process.cwd(), "content/posts/weblog/zack");
+  const postsDirectory = path.join(process.cwd(), "public/weblog/zack");
   const years = fs.readdirSync(postsDirectory);
 
   const posts = [];
