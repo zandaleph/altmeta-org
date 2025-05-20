@@ -1,14 +1,8 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { CSSProperties } from "react";
 import { getAllBlogPosts, getBlogPostContent } from "@/lib/blog";
 import BlogPicture from "./BlogPicture";
-
-interface HighligherStyle {
-  [key: string]: CSSProperties;
-}
+import BlogCode from "./BlogCode";
 
 export async function generateStaticParams() {
   const posts = getAllBlogPosts();
@@ -56,23 +50,7 @@ export default async function BlogPost({ params }: PageProps) {
             img: (props) => (
               <BlogPicture year={year} month={month} {...props} />
             ),
-            code: (props) => {
-              const { className, children } = props;
-              const match = /language-(\w+)/.exec(className || "");
-              return match ? (
-                <SyntaxHighlighter
-                  style={vscDarkPlus as HighligherStyle}
-                  language={match[1]}
-                  PreTag="div"
-                >
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            },
+            code: (props) => <BlogCode {...props} />,
           }}
         >
           {post.content}
