@@ -38,6 +38,7 @@ export default async function BlogPost({ params }: PageProps) {
               year: "numeric",
               month: "long",
               day: "numeric",
+              timeZone: "UTC",
             })}
           </time>
         )}

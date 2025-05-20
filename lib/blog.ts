@@ -55,7 +55,11 @@ export function getBlogPostContent(entry: BlogPostEntry): BlogPostContent {
 
   return {
     title: frontmatter.title || slug,
-    date: new Date(frontmatter.date || `${year}-${month}`),
+    date: new Date(
+      frontmatter.date
+        ? `${frontmatter.date}T00:00:00Z`
+        : `${year}-${month}-01T00:00:00Z`
+    ),
     slug,
     year,
     month,
