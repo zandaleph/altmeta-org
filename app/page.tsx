@@ -1,51 +1,11 @@
 import Image from "next-export-optimize-images/image";
 import Link from "next/link";
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-
-// Function to get all blog posts
-async function getBlogPosts() {
-  const postsDirectory = path.join(process.cwd(), "public/weblog/zack");
-  const years = fs.readdirSync(postsDirectory);
-
-  const posts = [];
-
-  for (const year of years) {
-    const yearPath = path.join(postsDirectory, year);
-    if (fs.statSync(yearPath).isDirectory()) {
-      const months = fs.readdirSync(yearPath);
-
-      for (const month of months) {
-        const monthPath = path.join(yearPath, month);
-        if (fs.statSync(monthPath).isDirectory()) {
-          const files = fs.readdirSync(monthPath);
-
-          for (const file of files) {
-            if (file.endsWith(".md")) {
-              const filePath = path.join(monthPath, file);
-              const fileContents = fs.readFileSync(filePath, "utf8");
-              const { data: frontmatter } = matter(fileContents);
-
-              posts.push({
-                title: frontmatter.title || file.replace(".md", ""),
-                date: frontmatter.date || `${year}-${month}`,
-                slug: `${year}/${month}/${file.replace(".md", "")}`,
-              });
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return posts.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
-}
+import { getAllBlogPosts, getBlogPostContent } from "@/lib/blog";
 
 export default async function Home() {
-  const posts = await getBlogPosts();
+  const postEntries = getAllBlogPosts();
+  const posts = postEntries.map((entry) => getBlogPostContent(entry));
+  posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -69,7 +29,7 @@ export default async function Home() {
               >
                 <h3 className="text-xl font-semibold mb-2">
                   <Link
-                    href={`/weblog/zack/${post.slug}`}
+                    href={`/weblog/zack/${post.year}/${post.month}/${post.slug}`}
                     className="hover:underline"
                   >
                     {post.title}
