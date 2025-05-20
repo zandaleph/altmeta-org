@@ -10,7 +10,7 @@ export interface BlogPostEntry {
 
 export interface BlogPostContent extends BlogPostEntry {
   title: string;
-  date: string;
+  date: Date;
   content: string;
   frontmatter: { [key: string]: string };
 }
@@ -55,7 +55,7 @@ export function getBlogPostContent(entry: BlogPostEntry): BlogPostContent {
 
   return {
     title: frontmatter.title || slug,
-    date: frontmatter.date || `${year}-${month}`,
+    date: new Date(frontmatter.date || `${year}-${month}`),
     slug,
     year,
     month,

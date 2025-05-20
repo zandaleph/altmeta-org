@@ -36,7 +36,7 @@ export default async function Home() {
                   </Link>
                 </h3>
                 <time className="text-sm text-gray-600 dark:text-gray-400">
-                  {new Date(post.date).toLocaleDateString("en-US", {
+                  {post.date.toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",

@@ -34,7 +34,7 @@ export default async function BlogPost({ params }: PageProps) {
         <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
         {post.date && (
           <time className="text-gray-600 dark:text-gray-400">
-            {new Date(post.date).toLocaleDateString("en-US", {
+            {post.date.toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
               day: "numeric",
