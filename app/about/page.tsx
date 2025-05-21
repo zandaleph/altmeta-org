@@ -28,6 +28,18 @@ export default function About() {
           </a>
           .
         </p>
+        <p>
+          My resume is available{" "}
+          <a
+            href="/about/ZackSpellmanResume2025.pdf"
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            here
+          </a>
+          .
+        </p>
       </div>
     </div>
   );
