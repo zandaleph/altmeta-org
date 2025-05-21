@@ -1,7 +1,8 @@
 ---
-title: 'Blog of My Dreams'
-date: '2019-11-10'
-lead: 'If you wait long enough, it will come.'
+title: "Blog of My Dreams"
+date: "2019-11-10"
+lead: "If you wait long enough, it will come."
+shortname: "blogv2"
 ---
 
 The wheel turns, and once again this website is resurrected by a bit of spare
