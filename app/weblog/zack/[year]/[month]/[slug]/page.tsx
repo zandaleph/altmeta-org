@@ -30,17 +30,24 @@ export default async function BlogPost({ params }: PageProps) {
 
   return (
     <article className="py-8">
-      <header className="mb-8">
+      <header className="mb-4">
         <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-        {post.date && (
-          <time className="text-gray-600 dark:text-gray-400">
-            {post.date.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              timeZone: "UTC",
-            })}
-          </time>
+        <p className="mb-2">
+          Posted{" "}
+          {post.date && (
+            <time>
+              {post.date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                timeZone: "UTC",
+              })}
+            </time>
+          )}{" "}
+          by Zack Spellman
+        </p>
+        {post.frontmatter.lead && (
+          <p className="italic">{post.frontmatter.lead}</p>
         )}
       </header>
 
