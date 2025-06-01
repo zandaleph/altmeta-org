@@ -3,6 +3,8 @@ import { Lora, Source_Code_Pro, Varela_Round } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const varelaRound = Varela_Round({
   variable: "--font-varela-round",
@@ -48,6 +50,8 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
