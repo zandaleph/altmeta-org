@@ -19,16 +19,14 @@ export default function About() {
           >
             GitHub
           </a>{" "}
-          {/* and{" "}
+          and{" "}
           <a
             href="https://linkedin.com/in/zack-spellman"
             className="text-blue-600 dark:text-blue-400 hover:underline"
           >
             LinkedIn
-          </a> */}
-          <span className="line-through">and LinkedIn</span> (Embarassingly,
-          LinkedIn has banned me for unspecified reasons. I&apos;m contesting
-          and am not particularly impressed with them at present.) .
+          </a>
+          .
         </p>
         <p>
           My resume is available{" "}
