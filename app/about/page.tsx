@@ -14,12 +14,19 @@ export default function About() {
         <p>
           You can find me on{" "}
           <a
+            href="https://www.threads.com/@zandaleph"
+            className="text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            Threads
+          </a>
+          ,{" "}
+          <a
             href="https://github.com/zandaleph"
             className="text-blue-600 dark:text-blue-400 hover:underline"
           >
             GitHub
           </a>{" "}
-          and{" "}
+          , and{" "}
           <a
             href="https://linkedin.com/in/zack-spellman"
             className="text-blue-600 dark:text-blue-400 hover:underline"
