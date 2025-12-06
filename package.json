@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build && next-export-optimize-images",
+    "optimize-images": "tsx scripts/optimize-images.ts",
+    "build": "npm run optimize-images && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -29,9 +30,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^15.5.7",
-    "next-export-optimize-images": "^4.6.2",
     "sharp": "^0.34.3",
     "tailwindcss": "^4",
+    "tsx": "^4.19.2",
     "typescript": "^5"
   }
 }
