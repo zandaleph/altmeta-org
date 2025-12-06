@@ -6,6 +6,7 @@ export interface BlogPostEntry {
   year: string;
   month: string;
   slug: string;
+  extension: "md" | "mdx";
 }
 
 export interface BlogPostContent extends BlogPostEntry {
@@ -32,11 +33,13 @@ export function getAllBlogPosts(): BlogPostEntry[] {
           const files = fs.readdirSync(monthPath);
 
           for (const file of files) {
-            if (file.endsWith(".md")) {
+            if (file.endsWith(".md") || file.endsWith(".mdx")) {
+              const extension = file.endsWith(".mdx") ? "mdx" : "md";
               posts.push({
-                slug: file.replace(".md", ""),
+                slug: file.replace(/\.mdx?$/, ""),
                 year,
                 month,
+                extension,
               });
             }
           }
@@ -48,8 +51,8 @@ export function getAllBlogPosts(): BlogPostEntry[] {
 }
 
 export function getBlogPostContent(entry: BlogPostEntry): BlogPostContent {
-  const { year, month, slug } = entry;
-  const filePath = path.join(POSTS_DIRECTORY, year, month, `${slug}.md`);
+  const { year, month, slug, extension } = entry;
+  const filePath = path.join(POSTS_DIRECTORY, year, month, `${slug}.${extension}`);
   const fileContents = fs.readFileSync(filePath, "utf8");
   const { data: frontmatter, content } = matter(fileContents);
 
@@ -63,6 +66,7 @@ export function getBlogPostContent(entry: BlogPostEntry): BlogPostContent {
     slug,
     year,
     month,
+    extension,
     content,
     frontmatter,
   };

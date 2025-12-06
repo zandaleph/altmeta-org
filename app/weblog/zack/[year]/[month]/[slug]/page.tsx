@@ -1,8 +1,9 @@
-import ReactMarkdown from "react-markdown";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { getAllBlogPosts, getBlogPostContent } from "@/lib/blog";
 import BlogPicture from "./BlogPicture";
 import BlogCode from "./BlogCode";
+import { getMDXComponents } from "@/components/mdx/mdx-components";
 
 export async function generateStaticParams() {
   const posts = getAllBlogPosts();
@@ -25,8 +26,20 @@ interface PageProps {
 
 export default async function BlogPost({ params }: PageProps) {
   const settledParams = await params;
-  const { year, month } = settledParams;
-  const post = getBlogPostContent(settledParams);
+  const { year, month, slug } = settledParams;
+
+  // Find the blog post entry to get the extension
+  const allPosts = getAllBlogPosts();
+  const postEntry = allPosts.find(
+    (p) => p.year === year && p.month === month && p.slug === slug
+  );
+
+  if (!postEntry) {
+    throw new Error(`Blog post not found: ${year}/${month}/${slug}`);
+  }
+
+  const post = getBlogPostContent(postEntry);
+  const mdxComponents = getMDXComponents(year, month, BlogPicture, BlogCode);
 
   return (
     <article className="py-8">
@@ -52,17 +65,15 @@ export default async function BlogPost({ params }: PageProps) {
       </header>
 
       <div className="prose dark:prose-invert max-w-none [&>blockquote]:border-l-4 [&>blockquote]:border-gray-300 [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:my-6 [&>blockquote]:text-gray-600 dark:[&>blockquote]:border-gray-700 dark:[&>blockquote]:text-gray-400">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            img: (props) => (
-              <BlogPicture year={year} month={month} {...props} />
-            ),
-            code: (props) => <BlogCode {...props} />,
+        <MDXRemote
+          source={post.content}
+          options={{
+            mdxOptions: {
+              remarkPlugins: [remarkGfm],
+            },
           }}
-        >
-          {post.content}
-        </ReactMarkdown>
+          components={mdxComponents}
+        />
       </div>
     </article>
   );

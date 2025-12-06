@@ -4,7 +4,7 @@ date: "2019-12-17"
 lead: "In which we add technology for technology's sake."
 ---
 
-import TodoApp from "./TodoApp";
+import TodoApp from "@/components/mdx/todo/TodoApp";
 
 As is my usual habit, once I've upgraded something I cannot resist continuously
 tweaking with it until I get bored. In doing so, I frequently fail to actually
@@ -13,8 +13,6 @@ place. But no matter that now, we've added more technlogy!
 
 Behold, a trivial Todo app _inside_ a blog post!
 
-```
-Ed: temporarily disabled while we upgrate the website's underpinnings.
 <TodoApp
   initialTodos={[
     'Create Todos',
@@ -22,7 +20,6 @@ Ed: temporarily disabled while we upgrate the website's underpinnings.
     'Backspace deletes empty items',
   ]}
 />
-```
 
 How amazing is this? Right? I guess? Maybe I should explain what's happening
 here.

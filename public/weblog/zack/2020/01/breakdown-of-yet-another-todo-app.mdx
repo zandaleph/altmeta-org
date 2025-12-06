@@ -4,14 +4,11 @@ date: "2020-01-18"
 lead: "In which we explain some code which exists to explain other code"
 ---
 
-import TodoApp from "../../2019/12/TodoApp";
+import TodoApp from "@/components/mdx/todo/TodoApp";
 
 To demo MDX, I wrote my own little Todo App, which you can see here:
 
-```
-Ed: temporarily disabled while we upgrate the website's underpinnings.
-<TodoApp />
-```
+<TodoApp initialTodos={['Make a Todo']} />
 
 [Last time] I wrote a bit about the process of developing this demo, so this
 time it makes sense to explain the demo from the code. We'll start at the top
