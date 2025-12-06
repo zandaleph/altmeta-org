@@ -20,8 +20,7 @@ interface ImageManifest {
 }
 
 interface OptimizedImageProps extends ImgHTMLAttributes<HTMLImageElement> {
-  src: string;
-  alt: string;
+  // Inherits src and alt from ImgHTMLAttributes (string | Blob | undefined)
 }
 
 // Load manifest once at module level (cached by Node)
@@ -43,11 +42,18 @@ function getManifest(): ImageManifest {
 }
 
 export default function OptimizedImage({ src, alt, className, ...props }: OptimizedImageProps) {
+  // Guard: We only optimize string paths. Blobs, undefined, etc. fall back to plain <img>
+  if (typeof src !== "string") {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={alt} className={className} {...props} />;
+  }
+
   const manifest = getManifest();
   const imageData = manifest[src];
 
   // If no optimized version exists, fall back to original
   if (!imageData) {
+    // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={alt} className={className} {...props} />;
   }
 
@@ -95,6 +101,7 @@ export default function OptimizedImage({ src, alt, className, ...props }: Optimi
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1920px"
         />
       )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={fallbackSrc}
         alt={alt}

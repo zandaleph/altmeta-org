@@ -13,19 +13,18 @@ export default function BlogPicture({
   month,
   ...props
 }: BlogPictureProps) {
-  // Handle non-relative paths (external images, etc)
-  if (typeof src !== "string" || !src.startsWith("./")) {
-    return <img {...props} src={src} alt={alt as string} />;
-  }
-
-  // Convert relative path to absolute public path
-  const rootSrc = `/weblog/zack/${year}/${month}/${src.slice(2)}`;
+  // Convert relative markdown paths (./image.png) to absolute public paths
+  // Non-relative paths (external URLs, etc.) pass through unchanged
+  // OptimizedImage will handle any edge cases (Blob, undefined, etc.)
+  const rootSrc = typeof src === "string" && src.startsWith("./")
+    ? `/weblog/zack/${year}/${month}/${src.slice(2)}`
+    : src;
 
   return (
     <OptimizedImage
       {...props}
       src={rootSrc}
-      alt={alt as string}
+      alt={alt}
     />
   );
 }
