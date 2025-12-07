@@ -16,18 +16,8 @@ interface PostMetadata {
   title: string;
   date: string; // ISO 8601 UTC
   lastModified: string; // ISO 8601 UTC
-  prev: {
-    slug: string;
-    year: string;
-    month: string;
-    title: string;
-  } | null;
-  next: {
-    slug: string;
-    year: string;
-    month: string;
-    title: string;
-  } | null;
+  prev: string | null; // slug of previous post
+  next: string | null; // slug of next post
 }
 
 interface Metadata {
@@ -220,22 +210,8 @@ function fullRecompute(metadata: Metadata): Metadata {
       title: post.title,
       date: post.date.toISOString(),
       lastModified,
-      prev: prev
-        ? {
-            slug: prev.slug,
-            year: prev.year,
-            month: prev.month,
-            title: prev.title,
-          }
-        : null,
-      next: next
-        ? {
-            slug: next.slug,
-            year: next.year,
-            month: next.month,
-            title: next.title,
-          }
-        : null,
+      prev: prev ? prev.slug : null,
+      next: next ? next.slug : null,
     };
   });
 
@@ -254,27 +230,9 @@ function fastUpdate(metadata: Metadata, stagedPosts: StagedPost[]): Metadata {
       process.exit(1);
     }
 
-    // Update lastModified
+    // Update lastModified and title (no need to update neighbors since they just store slugs)
     existing.lastModified = now;
-
-    // Check if title changed
-    if (existing.title !== post.title) {
-      existing.title = post.title;
-
-      // Update neighbors' references
-      if (existing.prev) {
-        const prevPost = newMetadata.posts[existing.prev.slug];
-        if (prevPost?.next) {
-          prevPost.next.title = post.title;
-        }
-      }
-      if (existing.next) {
-        const nextPost = newMetadata.posts[existing.next.slug];
-        if (nextPost?.prev) {
-          nextPost.prev.title = post.title;
-        }
-      }
-    }
+    existing.title = post.title;
   }
 
   return newMetadata;
@@ -286,11 +244,11 @@ function fastAppend(metadata: Metadata, newPosts: StagedPost[]): Metadata {
   const now = new Date().toISOString();
   const newMetadata = JSON.parse(JSON.stringify(metadata)) as Metadata;
 
-  // Find current last post
-  let lastPost: PostMetadata | null = null;
+  // Find current last post slug
+  let lastSlug: string | null = null;
   for (const post of Object.values(newMetadata.posts)) {
     if (!post.next) {
-      lastPost = post;
+      lastSlug = post.slug;
       break;
     }
   }
@@ -298,7 +256,7 @@ function fastAppend(metadata: Metadata, newPosts: StagedPost[]): Metadata {
   // Sort new posts by date
   newPosts.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  let prevPost = lastPost;
+  let prevSlug = lastSlug;
   for (const newPost of newPosts) {
     const postMeta: PostMetadata = {
       slug: newPost.slug,
@@ -308,30 +266,18 @@ function fastAppend(metadata: Metadata, newPosts: StagedPost[]): Metadata {
       title: newPost.title,
       date: newPost.date.toISOString(),
       lastModified: now,
-      prev: prevPost
-        ? {
-            slug: prevPost.slug,
-            year: prevPost.year,
-            month: prevPost.month,
-            title: prevPost.title,
-          }
-        : null,
+      prev: prevSlug,
       next: null,
     };
 
     newMetadata.posts[newPost.slug] = postMeta;
 
     // Update previous post's next pointer
-    if (prevPost) {
-      prevPost.next = {
-        slug: newPost.slug,
-        year: newPost.year,
-        month: newPost.month,
-        title: newPost.title,
-      };
+    if (prevSlug) {
+      newMetadata.posts[prevSlug].next = newPost.slug;
     }
 
-    prevPost = postMeta;
+    prevSlug = newPost.slug;
   }
 
   return newMetadata;

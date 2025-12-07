@@ -15,18 +15,8 @@ interface PostMetadata {
   title: string;
   date: string; // ISO 8601 UTC
   lastModified: string; // ISO 8601 UTC
-  prev: {
-    slug: string;
-    year: string;
-    month: string;
-    title: string;
-  } | null;
-  next: {
-    slug: string;
-    year: string;
-    month: string;
-    title: string;
-  } | null;
+  prev: string | null; // slug of previous post
+  next: string | null; // slug of next post
 }
 
 interface Metadata {
@@ -178,12 +168,12 @@ function validateMetadata(): void {
       console.error(`   ❌ ${post.slug} should have prev: ${expectedPrev.slug}`);
       errors++;
     } else if (!expectedPrev && meta.prev) {
-      console.error(`   ❌ ${post.slug} should not have prev (has: ${meta.prev.slug})`);
+      console.error(`   ❌ ${post.slug} should not have prev (has: ${meta.prev})`);
       errors++;
-    } else if (expectedPrev && meta.prev && expectedPrev.slug !== meta.prev.slug) {
+    } else if (expectedPrev && meta.prev && expectedPrev.slug !== meta.prev) {
       console.error(`   ❌ ${post.slug} prev mismatch:`);
       console.error(`      Expected: ${expectedPrev.slug}`);
-      console.error(`      Got: ${meta.prev.slug}`);
+      console.error(`      Got: ${meta.prev}`);
       errors++;
     }
 
@@ -191,12 +181,12 @@ function validateMetadata(): void {
       console.error(`   ❌ ${post.slug} should have next: ${expectedNext.slug}`);
       errors++;
     } else if (!expectedNext && meta.next) {
-      console.error(`   ❌ ${post.slug} should not have next (has: ${meta.next.slug})`);
+      console.error(`   ❌ ${post.slug} should not have next (has: ${meta.next})`);
       errors++;
-    } else if (expectedNext && meta.next && expectedNext.slug !== meta.next.slug) {
+    } else if (expectedNext && meta.next && expectedNext.slug !== meta.next) {
       console.error(`   ❌ ${post.slug} next mismatch:`);
       console.error(`      Expected: ${expectedNext.slug}`);
-      console.error(`      Got: ${meta.next.slug}`);
+      console.error(`      Got: ${meta.next}`);
       errors++;
     }
   }
@@ -204,33 +194,13 @@ function validateMetadata(): void {
   // Check 5: Prev/next references are valid
   console.log("   Checking prev/next references...");
   for (const [slug, meta] of Object.entries(metadata.posts)) {
-    if (meta.prev && !metadata.posts[meta.prev.slug]) {
-      console.error(`   ❌ ${slug} has invalid prev reference: ${meta.prev.slug}`);
+    if (meta.prev && !metadata.posts[meta.prev]) {
+      console.error(`   ❌ ${slug} has invalid prev reference: ${meta.prev}`);
       errors++;
     }
-    if (meta.next && !metadata.posts[meta.next.slug]) {
-      console.error(`   ❌ ${slug} has invalid next reference: ${meta.next.slug}`);
+    if (meta.next && !metadata.posts[meta.next]) {
+      console.error(`   ❌ ${slug} has invalid next reference: ${meta.next}`);
       errors++;
-    }
-
-    // Check that referenced titles match
-    if (meta.prev) {
-      const prevPost = metadata.posts[meta.prev.slug];
-      if (prevPost && prevPost.title !== meta.prev.title) {
-        console.error(`   ❌ ${slug} prev title mismatch:`);
-        console.error(`      Referenced: ${meta.prev.title}`);
-        console.error(`      Actual: ${prevPost.title}`);
-        errors++;
-      }
-    }
-    if (meta.next) {
-      const nextPost = metadata.posts[meta.next.slug];
-      if (nextPost && nextPost.title !== meta.next.title) {
-        console.error(`   ❌ ${slug} next title mismatch:`);
-        console.error(`      Referenced: ${meta.next.title}`);
-        console.error(`      Actual: ${nextPost.title}`);
-        errors++;
-      }
     }
   }
 

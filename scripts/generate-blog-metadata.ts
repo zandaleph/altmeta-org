@@ -16,18 +16,8 @@ interface PostMetadata {
   title: string;
   date: string; // ISO 8601 UTC
   lastModified: string; // ISO 8601 UTC
-  prev: {
-    slug: string;
-    year: string;
-    month: string;
-    title: string;
-  } | null;
-  next: {
-    slug: string;
-    year: string;
-    month: string;
-    title: string;
-  } | null;
+  prev: string | null; // slug of previous post
+  next: string | null; // slug of next post
 }
 
 interface Metadata {
@@ -168,22 +158,8 @@ function generateMetadata(): void {
       title: post.title,
       date: post.date.toISOString(),
       lastModified: post.lastModified.toISOString(),
-      prev: prev
-        ? {
-            slug: prev.slug,
-            year: prev.year,
-            month: prev.month,
-            title: prev.title,
-          }
-        : null,
-      next: next
-        ? {
-            slug: next.slug,
-            year: next.year,
-            month: next.month,
-            title: next.title,
-          }
-        : null,
+      prev: prev ? prev.slug : null,
+      next: next ? next.slug : null,
     };
   });
 
