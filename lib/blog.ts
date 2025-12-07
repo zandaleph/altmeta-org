@@ -71,3 +71,40 @@ export function getBlogPostContent(entry: BlogPostEntry): BlogPostContent {
     frontmatter,
   };
 }
+
+export interface AdjacentPosts {
+  previous: BlogPostContent | null;
+  next: BlogPostContent | null;
+}
+
+// Cache the sorted posts list to avoid re-reading all files on every page generation
+let sortedPostsCache: BlogPostContent[] | null = null;
+
+function getSortedPosts(): BlogPostContent[] {
+  if (sortedPostsCache === null) {
+    const allPosts = getAllBlogPosts();
+    const postsWithContent = allPosts.map(getBlogPostContent);
+    // Sort by date ascending (oldest first)
+    postsWithContent.sort((a, b) => a.date.getTime() - b.date.getTime());
+    sortedPostsCache = postsWithContent;
+  }
+  return sortedPostsCache;
+}
+
+export function getAdjacentPosts(entry: BlogPostEntry): AdjacentPosts {
+  const sortedPosts = getSortedPosts();
+
+  // Find the current post's index
+  const currentIndex = sortedPosts.findIndex(
+    (p) => p.year === entry.year && p.month === entry.month && p.slug === entry.slug
+  );
+
+  if (currentIndex === -1) {
+    return { previous: null, next: null };
+  }
+
+  return {
+    previous: currentIndex > 0 ? sortedPosts[currentIndex - 1] : null,
+    next: currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null,
+  };
+}

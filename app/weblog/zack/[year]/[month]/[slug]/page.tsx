@@ -1,6 +1,7 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
-import { getAllBlogPosts, getBlogPostContent } from "@/lib/blog";
+import Link from "next/link";
+import { getAllBlogPosts, getBlogPostContent, getAdjacentPosts } from "@/lib/blog";
 import BlogPicture from "./BlogPicture";
 import BlogCode from "./BlogCode";
 import { getMDXComponents } from "@/components/mdx/mdx-components";
@@ -40,6 +41,7 @@ export default async function BlogPost({ params }: PageProps) {
 
   const post = getBlogPostContent(postEntry);
   const mdxComponents = getMDXComponents(year, month, BlogPicture, BlogCode);
+  const { previous, next } = getAdjacentPosts(postEntry);
 
   return (
     <article className="py-8">
@@ -75,6 +77,25 @@ export default async function BlogPost({ params }: PageProps) {
           components={mdxComponents}
         />
       </div>
+
+      <nav className="mt-8 pt-4 border-t border-gray-300 dark:border-gray-700">
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
+          {previous && (
+            <div>
+              <Link href={`/weblog/zack/${previous.year}/${previous.month}/${previous.slug}`} className="hover:underline">
+                ← {previous.title}
+              </Link>
+            </div>
+          )}
+          {next && (
+            <div className="text-right">
+              <Link href={`/weblog/zack/${next.year}/${next.month}/${next.slug}`} className="hover:underline">
+                {next.title} →
+              </Link>
+            </div>
+          )}
+        </div>
+      </nav>
     </article>
   );
 }
