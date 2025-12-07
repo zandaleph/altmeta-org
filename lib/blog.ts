@@ -72,39 +72,66 @@ export function getBlogPostContent(entry: BlogPostEntry): BlogPostContent {
   };
 }
 
-export interface AdjacentPosts {
-  previous: BlogPostContent | null;
-  next: BlogPostContent | null;
+export interface AdjacentPost {
+  slug: string;
+  year: string;
+  month: string;
+  title: string;
 }
 
-// Cache the sorted posts list to avoid re-reading all files on every page generation
-let sortedPostsCache: BlogPostContent[] | null = null;
+export interface AdjacentPosts {
+  previous: AdjacentPost | null;
+  next: AdjacentPost | null;
+}
 
-function getSortedPosts(): BlogPostContent[] {
-  if (sortedPostsCache === null) {
-    const allPosts = getAllBlogPosts();
-    const postsWithContent = allPosts.map(getBlogPostContent);
-    // Sort by date ascending (oldest first)
-    postsWithContent.sort((a, b) => a.date.getTime() - b.date.getTime());
-    sortedPostsCache = postsWithContent;
+interface BlogMetadata {
+  posts: {
+    [slug: string]: {
+      slug: string;
+      year: string;
+      month: string;
+      extension: "md" | "mdx";
+      title: string;
+      date: string;
+      lastModified: string;
+      prev: AdjacentPost | null;
+      next: AdjacentPost | null;
+    };
+  };
+}
+
+let metadataCache: BlogMetadata | null = null;
+
+function loadMetadata(): BlogMetadata {
+  if (metadataCache === null) {
+    const metadataPath = path.join(process.cwd(), "blog-metadata.json");
+    const metadataContent = fs.readFileSync(metadataPath, "utf8");
+    metadataCache = JSON.parse(metadataContent);
   }
-  return sortedPostsCache;
+  return metadataCache!;
 }
 
 export function getAdjacentPosts(entry: BlogPostEntry): AdjacentPosts {
-  const sortedPosts = getSortedPosts();
+  const metadata = loadMetadata();
+  const postMeta = metadata.posts[entry.slug];
 
-  // Find the current post's index
-  const currentIndex = sortedPosts.findIndex(
-    (p) => p.year === entry.year && p.month === entry.month && p.slug === entry.slug
-  );
-
-  if (currentIndex === -1) {
+  if (!postMeta) {
     return { previous: null, next: null };
   }
 
   return {
-    previous: currentIndex > 0 ? sortedPosts[currentIndex - 1] : null,
-    next: currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null,
+    previous: postMeta.prev,
+    next: postMeta.next,
   };
+}
+
+export function getLastModified(entry: BlogPostEntry): Date | null {
+  const metadata = loadMetadata();
+  const postMeta = metadata.posts[entry.slug];
+
+  if (!postMeta?.lastModified) {
+    return null;
+  }
+
+  return new Date(postMeta.lastModified);
 }

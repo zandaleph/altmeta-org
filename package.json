@@ -7,7 +7,11 @@
     "optimize-images": "tsx scripts/optimize-images.ts",
     "build": "npm run optimize-images && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-metadata": "tsx scripts/generate-blog-metadata.ts",
+    "update-metadata": "tsx scripts/update-blog-metadata.ts",
+    "validate-metadata": "tsx scripts/validate-blog-metadata.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@types/react-syntax-highlighter": "^15.5.13",
@@ -30,6 +34,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^16.0.7",
+    "husky": "^9.1.7",
     "sharp": "^0.34.3",
     "tailwindcss": "^4",
     "tsx": "^4.19.2",

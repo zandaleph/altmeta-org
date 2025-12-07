@@ -1,7 +1,7 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import Link from "next/link";
-import { getAllBlogPosts, getBlogPostContent, getAdjacentPosts } from "@/lib/blog";
+import { getAllBlogPosts, getBlogPostContent, getAdjacentPosts, getLastModified } from "@/lib/blog";
 import BlogPicture from "./BlogPicture";
 import BlogCode from "./BlogCode";
 import { getMDXComponents } from "@/components/mdx/mdx-components";
@@ -42,6 +42,30 @@ export default async function BlogPost({ params }: PageProps) {
   const post = getBlogPostContent(postEntry);
   const mdxComponents = getMDXComponents(year, month, BlogPicture, BlogCode);
   const { previous, next } = getAdjacentPosts(postEntry);
+  const lastModified = getLastModified(postEntry);
+
+  // Format last modified date
+  const formatDate = (date: Date): string => {
+    const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+
+    const ordinal = (n: number): string => {
+      const s = ["th", "st", "nd", "rd"];
+      const v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    };
+
+    return `${month} ${ordinal(day)}, ${year} ${hours}:${minutes}`;
+  };
+
+  const githubUrl = `https://github.com/zandaleph/altmeta-org/blob/main/public/weblog/zack/${year}/${month}/${slug}.${postEntry.extension}`;
 
   return (
     <article className="py-8">
@@ -77,6 +101,14 @@ export default async function BlogPost({ params }: PageProps) {
           components={mdxComponents}
         />
       </div>
+
+      {lastModified && (
+        <p className="mt-8 italic text-sm text-gray-600 dark:text-gray-400">
+          <a href={githubUrl} className="hover:underline" target="_blank" rel="noopener noreferrer">
+            Last edited: {formatDate(lastModified)}
+          </a>
+        </p>
+      )}
 
       <nav className="mt-8 pt-4 border-t border-gray-300 dark:border-gray-700">
         <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
